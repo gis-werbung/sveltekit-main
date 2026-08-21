@@ -17,6 +17,18 @@ export const advertisementStatusEnum = d.pgEnum("advertisement_status", [
 	"auto_paused"
 ]);
 
+export const supportStatusEnum = d.pgEnum("support_status", [
+	"open",
+	"resolved",
+	"closed",
+	"answered_in_faq"
+]);
+
+export const supportMessageStatusEnum = d.pgEnum("support_message_status", [
+	"awaitingUserResponse",
+	"awaitingModResponse"
+]);
+
 export const users = d.snakeCase.table("users", {
 	id: d.serial().primaryKey(),
 	email: d.text().notNull().unique(),
@@ -45,11 +57,22 @@ export const advertisements = d.snakeCase.table("advertisements", {
 	videoUpgradeBooked: d.boolean().notNull(),
 
 	ownerId: d.integer().notNull(),
-	fileId: d.integer().notNull()
+	fileId: d.integer().notNull(),
+
+	createdAt: d.timestamp().defaultNow().notNull(),
+	// Users can set a date on which the status will automatically be set to "accepted" if it is paused
+	launchAt: d.timestamp(),
+	// Users can set an expiary on which the ad will not be shown anymore and the subscription will be cancelled
+	expireAt: d.timestamp()
 });
 
-export const adSupportChat = d.snakeCase.table("ad_support_chat", {
-	advertisementId: d.integer().primaryKey()
+export const supportChat = d.snakeCase.table("support_chat", {
+	id: d.serial().primaryKey(),
+	openedAt: d.timestamp().defaultNow().notNull(),
+	closedAt: d.timestamp(),
+	authorID: d.integer().notNull(),
+	status: supportStatusEnum().default("open").notNull(),
+	messageStatus: supportMessageStatusEnum()
 });
 
 export const supportMessage = d.snakeCase.table("message", {
@@ -60,7 +83,7 @@ export const supportMessage = d.snakeCase.table("message", {
 });
 
 export const relations = defineRelations(
-	{ users, files, advertisements, adSupportChat, supportMessage },
+	{ users, files, advertisements, supportMessage, supportChat },
 	(r) => ({
 		advertisements: {
 			owner: r.one.users({
@@ -74,12 +97,6 @@ export const relations = defineRelations(
 				to: r.files.id,
 				optional: false,
 				alias: "file-usage"
-			}),
-			supportChat: r.one.adSupportChat({
-				from: r.advertisements.id,
-				to: r.adSupportChat.advertisementId,
-				optional: false,
-				alias: "ad-support-chat"
 			})
 		},
 		files: {
@@ -95,17 +112,16 @@ export const relations = defineRelations(
 			advertisements: r.many.advertisements({ alias: "owner" }),
 			files: r.many.files({ alias: "file-owner" })
 		},
-		supportMessage: {
-			chat: r.one.adSupportChat({
-				from: r.supportMessage.chatId,
-				to: r.adSupportChat.advertisementId,
-				optional: false,
-				alias: "ad-support-message"
-			})
+		supportChat: {
+			messages: r.many.supportMessage({ alias: "support-messages" })
 		},
-		adSupportChat: {
-			advertisement: r.one.advertisements({ alias: "ad-support-chat" }),
-			messages: r.many.supportMessage({ alias: "ad-support-message" })
+		supportMessage: {
+			chat: r.one.supportChat({
+				from: r.supportMessage.chatId,
+				to: r.supportChat.id,
+				optional: false,
+				alias: "support-messages"
+			})
 		}
 	})
 );
