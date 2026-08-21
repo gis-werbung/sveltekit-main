@@ -1,5 +1,4 @@
 import * as d from "drizzle-orm/pg-core";
-import { defineRelations } from "drizzle-orm";
 
 export const accountStatusEnum = d.pgEnum("account_status", [
 	"user",
@@ -32,10 +31,11 @@ export const supportMessageStatusEnum = d.pgEnum("support_message_status", [
 export const users = d.snakeCase.table("users", {
 	id: d.serial().primaryKey(),
 	email: d.text().notNull().unique(),
+	isEmailVerified: d.boolean().default(false).notNull(),
 	name: d.text().notNull().unique(),
 	passwordHash: d.char({ length: 43 }).notNull(),
 	status: accountStatusEnum().default("user").notNull(),
-	balance: d.integer(),
+	balance: d.integer().default(0),
 
 	createdAt: d.timestamp().defaultNow().notNull(),
 	updatedAt: d.timestamp().defaultNow().notNull()
@@ -81,47 +81,3 @@ export const supportMessage = d.snakeCase.table("message", {
 	sendAt: d.timestamp().defaultNow().notNull(),
 	content: d.text().notNull()
 });
-
-export const relations = defineRelations(
-	{ users, files, advertisements, supportMessage, supportChat },
-	(r) => ({
-		advertisements: {
-			owner: r.one.users({
-				from: r.advertisements.ownerId,
-				to: r.users.id,
-				optional: false,
-				alias: "owner"
-			}),
-			file: r.one.files({
-				from: r.advertisements.fileId,
-				to: r.files.id,
-				optional: false,
-				alias: "file-usage"
-			})
-		},
-		files: {
-			owner: r.one.users({
-				from: r.files.ownerId,
-				to: r.users.id,
-				optional: false,
-				alias: "file-owner"
-			}),
-			advertisements: r.many.advertisements({ alias: "file-usage" })
-		},
-		users: {
-			advertisements: r.many.advertisements({ alias: "owner" }),
-			files: r.many.files({ alias: "file-owner" })
-		},
-		supportChat: {
-			messages: r.many.supportMessage({ alias: "support-messages" })
-		},
-		supportMessage: {
-			chat: r.one.supportChat({
-				from: r.supportMessage.chatId,
-				to: r.supportChat.id,
-				optional: false,
-				alias: "support-messages"
-			})
-		}
-	})
-);
