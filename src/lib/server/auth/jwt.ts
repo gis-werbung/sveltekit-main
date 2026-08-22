@@ -61,22 +61,26 @@ export async function validateJWT(
 	expectedTokenType = JWTTokenTypes.LoginToken,
 	additionalDataSchema?: v.ObjectSchema<any, any>
 ) {
-	const { payload } = await jwtVerify(jwt, jwtSecretKey);
+	try {
+		const { payload } = await jwtVerify(jwt, jwtSecretKey);
 
-	const results = v.safeParse(
-		v.intersect([genericJWTSchema, additionalDataSchema ?? v.object({})]),
-		payload
-	);
-	if (!results.success) return null;
+		const results = v.safeParse(
+			v.intersect([genericJWTSchema, additionalDataSchema ?? v.object({})]),
+			payload
+		);
+		if (!results.success) return null;
 
-	const data = results.output;
-	if (data.tokenType !== expectedTokenType) return null;
+		const data = results.output;
+		if (data.tokenType !== expectedTokenType) return null;
 
-	const user = await db.query.users.findFirst({
-		where: { id: data.userId },
-		columns: { passwordHash: false }
-	});
-	if (user?.updatedAt.toISOString() !== data.lastChanged) return null;
+		const user = await db.query.users.findFirst({
+			where: { id: data.userId },
+			columns: { passwordHash: false }
+		});
+		if (user?.updatedAt.toISOString() !== data.lastChanged) return null;
 
-	return { user, data };
+		return { user, data };
+	} catch {
+		return null;
+	}
 }

@@ -6,8 +6,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const jwt = event.cookies.get("token");
 	if (jwt) {
-		const user = await validateJWT(jwt);
-		event.locals.user = user?.user;
+		const result = await validateJWT(jwt);
+
+		if (result) {
+			event.locals.user = result.user;
+		} else {
+			event.cookies.delete("token", { path: "/" });
+		}
 	}
 
 	return await resolve(event);
