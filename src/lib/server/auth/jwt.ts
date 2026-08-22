@@ -1,22 +1,27 @@
 import { env } from "$env/dynamic/private";
-import { jwtVerify, SignJWT, type JWTPayload } from "jose";
-import { db, type users } from "$lib/server/db";
+import { jwtVerify, SignJWT } from "jose";
+import { db } from "$lib/server/db";
 import * as v from "valibot";
 
 if (!env.JWT_SECRET) throw new Error("JWT_SECRET is not set");
 
 const jwtSecretKey = new TextEncoder().encode(env.JWT_SECRET);
 
+export enum JWTTokenTypes {
+	LoginToken = "login_token",
+	EmailVerify = "email_verify"
+}
+
 const genericJWTSchema = v.object({
-	tokenType: v.pipe(v.string(), v.nonEmpty()),
+	tokenType: v.enum(JWTTokenTypes),
 	userId: v.pipe(v.number(), v.integer()),
 	lastChanged: v.pipe(v.string(), v.isoDateTimeSecond())
 });
 type GenericJWT = v.InferOutput<typeof genericJWTSchema>;
 
 export function createJWT(
-	user: typeof users.$inferSelect,
-	tokenType: string = "loginToken",
+	user: DBTypes.OpenUser,
+	tokenType = JWTTokenTypes.LoginToken,
 	expirationTime: number | string | Date,
 	additionalData?: Record<string, any>
 ) {
@@ -36,24 +41,24 @@ export function createJWT(
 
 export async function validateJWT(
 	jwt: string,
-	expectedTokenType?: string
+	expectedTokenType?: JWTTokenTypes
 ): Promise<{
-	user: typeof users.$inferSelect;
+	user: DBTypes.OpenUser;
 	data: GenericJWT;
 } | null>;
 
 export async function validateJWT<DataSchema extends v.ObjectSchema<any, any>>(
 	jwt: string,
-	expectedTokenType: string,
+	expectedTokenType: JWTTokenTypes,
 	additionalDataSchema: DataSchema
 ): Promise<{
-	user: typeof users.$inferSelect;
+	user: DBTypes.OpenUser;
 	data: GenericJWT & v.InferOutput<DataSchema>;
 } | null>;
 
 export async function validateJWT(
 	jwt: string,
-	expectedTokenType = "loginToken",
+	expectedTokenType = JWTTokenTypes.LoginToken,
 	additionalDataSchema?: v.ObjectSchema<any, any>
 ) {
 	const { payload } = await jwtVerify(jwt, jwtSecretKey);
@@ -67,7 +72,10 @@ export async function validateJWT(
 	const data = results.output;
 	if (data.tokenType !== expectedTokenType) return null;
 
-	const user = await db.query.users.findFirst({ where: { id: data.userId } });
+	const user = await db.query.users.findFirst({
+		where: { id: data.userId },
+		columns: { passwordHash: false }
+	});
 	if (user?.updatedAt.toISOString() !== data.lastChanged) return null;
 
 	return { user, data };

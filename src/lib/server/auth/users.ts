@@ -21,3 +21,10 @@ export async function changePassword(id: number, newPassword: string) {
 
 	await db.update(users).set({ passwordHash }).where(eq(users.id, id));
 }
+
+export function isUserModerator(user: DBTypes.OpenUser | undefined) {
+	return user && (user.status === "moderator" || user.status === "admin");
+}
+export function isUserAdmin(user: DBTypes.OpenUser | undefined) {
+	return user && user.status === "admin";
+}
