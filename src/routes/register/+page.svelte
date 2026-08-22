@@ -15,8 +15,12 @@
 			<Card.Description>Geben Sie ihre Daten an, um sich ein Konto anzulegen</Card.Description>
 		</Card.Header>
 
-		<Card.Content>
-			<form class="flex flex-col gap-3">
+		<form {...register}>
+			<Card.Content class="mb-3 flex flex-col gap-3">
+				{#each register.fields.issues() as issue}
+					<span class="text-destructive">{issue.message}</span>
+				{/each}
+
 				<InputGroup.Root>
 					<InputGroup.Addon>
 						<UserRound />
@@ -29,6 +33,9 @@
 						placeholder="Max Mustermann"
 					/>
 				</InputGroup.Root>
+				{#each register.fields.name.issues() as issue}
+					<span class="text-destructive">{issue.message}</span>
+				{/each}
 
 				<InputGroup.Root>
 					<InputGroup.Addon>
@@ -42,6 +49,9 @@
 						placeholder="max.mustermann@iserv-gis.de"
 					/>
 				</InputGroup.Root>
+				{#each register.fields.email.issues() as issue}
+					<span class="text-destructive">{issue.message}</span>
+				{/each}
 
 				<InputGroup.Root>
 					<InputGroup.Addon>
@@ -69,6 +79,9 @@
 						</InputGroup.Button>
 					</InputGroup.Addon>
 				</InputGroup.Root>
+				{#each register.fields._password.issues() as issue}
+					<span class="text-destructive">{issue.message}</span>
+				{/each}
 
 				<InputGroup.Root>
 					<InputGroup.Addon>
@@ -78,19 +91,22 @@
 
 					<InputGroup.Input
 						autocomplete="new-password"
-						{...register.fields._password.as("password")}
+						{...register.fields._repeatPassword.as("password")}
 						type={checked ? "text" : "password"}
 					/>
 				</InputGroup.Root>
-			</form>
-		</Card.Content>
-		<Card.Footer class="flex-col gap-2">
-			<Button type="submit" class="w-full">
-				<UserRoundPlus />
-				Konto erstellen
-			</Button>
+				{#each register.fields._repeatPassword.issues() as issue}
+					<span class="text-destructive">{issue.message}</span>
+				{/each}
+			</Card.Content>
+			<Card.Footer class="flex-col gap-2">
+				<Button type="submit" class="w-full">
+					<UserRoundPlus />
+					Konto erstellen
+				</Button>
 
-			<Button variant="outline" href="/login" class="w-full">Ich habe bereits ein Konto</Button>
-		</Card.Footer>
+				<Button variant="outline" href="/login" class="w-full">Ich habe bereits ein Konto</Button>
+			</Card.Footer>
+		</form>
 	</Card.Root>
 </div>

@@ -17,10 +17,11 @@ export const register = form(
 			v.string(),
 			v.nonEmpty("Bitte gib ein Password ein"),
 			v.minLength(8, "Dein Password muss mindestens 8 Zeichen haben")
-		)
+		),
+		_repeatPassword: v.pipe(v.string(), v.nonEmpty("Bitte gib das Password erneut ein"))
 	}),
 	async (data) => {
 		// TODO: Implement
-		return new Error("Not implemented");
+		throw new Error("Not implemented");
 	}
 );

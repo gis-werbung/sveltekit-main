@@ -16,6 +16,6 @@ export const login = form(
 	}),
 	async (data) => {
 		// TODO: Implement
-		return new Error("Not implemented");
+		throw new Error("Not implemented");
 	}
 );
