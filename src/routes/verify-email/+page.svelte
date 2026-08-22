@@ -9,13 +9,13 @@
 	import { Spinner } from "$lib/components/ui/spinner";
 
 	async function resend() {
-		// const result = resendEmailCode();
+		const result = resendEmailCode();
 
-		// toast.promise(result, {
-		// 	loading: "Deine E-Mail wird gesendet",
-		// 	success: "Deine E-Mail wurde gesendet",
-		// 	error: "Deine E-Mail konnte leider nicht gesendet werden. Probiere es später nochmal"
-		// });
+		toast.promise(result, {
+			loading: "Deine E-Mail wird gesendet",
+			success: "Deine E-Mail wurde gesendet",
+			error: "Deine E-Mail konnte leider nicht gesendet werden. Probiere es später nochmal"
+		});
 
 		countdown.setSeconds(30);
 	}
