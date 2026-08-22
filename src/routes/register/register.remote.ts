@@ -1,15 +1,15 @@
 import { form } from "$app/server";
 import * as v from "valibot";
 
-export const login = form(
+export const register = form(
 	v.object({
 		name: v.pipe(v.string(), v.nonEmpty("Bitte gib deinen Namen an")),
 		email: v.pipe(
 			v.string(),
 			v.nonEmpty("Bitte gib eine E-Mail an"),
 			v.email("Bitte gib eine gültige E-Mail an"),
-			v.check(
-				(data) => data.split("@")[1] === "iserv-gis.de",
+			v.endsWith(
+				"iserv-gis.de",
 				"Derzeit erlauben wir nur Registrationen mit schulinternen E-Mail-Adressen"
 			)
 		),
