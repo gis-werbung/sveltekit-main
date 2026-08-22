@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { register } from "./register.remote";
-	import { Eye, EyeOff, KeyRound, Mail, UserRound, UserRoundPlus } from "@lucide/svelte";
+	import {
+		Eye,
+		EyeOff,
+		KeyRound,
+		Mail,
+		UserRound,
+		UserRoundKey,
+		UserRoundPlus
+	} from "@lucide/svelte";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button";
@@ -8,18 +16,25 @@
 	let checked = $state(false);
 </script>
 
-<div class="absolute top-1/2 left-1/2 w-md -translate-1/2">
-	<Card.Root>
+<svelte:head>
+	<title>Registrieren | GiS Werbung</title>
+</svelte:head>
+
+<div class="absolute top-1/2 left-1/2 w-md -translate-1/2 not-sm:w-full">
+	<Card.Root class="mx-3">
 		<Card.Header>
-			<Card.Title>Ein Konto erstellen</Card.Title>
-			<Card.Description>Geben Sie ihre Daten an, um sich ein Konto anzulegen</Card.Description>
+			<div class="flex items-center gap-3">
+				<UserRoundPlus size="64" strokeWidth="1.25" class="text-muted-foreground" />
+				<div>
+					<Card.Title>Ein Konto erstellen</Card.Title>
+					<Card.Description>Gib deine Daten ein, um dein Konto anzulegen</Card.Description>
+				</div>
+			</div>
 		</Card.Header>
 
 		<form {...register}>
 			<Card.Content class="mb-3 flex flex-col gap-3">
-				{#each register.fields.issues() as issue}
-					<span class="text-destructive">{issue.message}</span>
-				{/each}
+				<span class="text-destructive">{register.fields.issues()?.[0].message}</span>
 
 				<InputGroup.Root>
 					<InputGroup.Addon>
@@ -33,9 +48,7 @@
 						placeholder="Max Mustermann"
 					/>
 				</InputGroup.Root>
-				{#each register.fields.name.issues() as issue}
-					<span class="text-destructive">{issue.message}</span>
-				{/each}
+				<span class="text-destructive">{register.fields.name.issues()?.[0].message}</span>
 
 				<InputGroup.Root>
 					<InputGroup.Addon>
@@ -49,9 +62,7 @@
 						placeholder="max.mustermann@iserv-gis.de"
 					/>
 				</InputGroup.Root>
-				{#each register.fields.email.issues() as issue}
-					<span class="text-destructive">{issue.message}</span>
-				{/each}
+				<span class="text-destructive">{register.fields.email.issues()?.[0].message}</span>
 
 				<InputGroup.Root>
 					<InputGroup.Addon>
@@ -79,9 +90,7 @@
 						</InputGroup.Button>
 					</InputGroup.Addon>
 				</InputGroup.Root>
-				{#each register.fields._password.issues() as issue}
-					<span class="text-destructive">{issue.message}</span>
-				{/each}
+				<span class="text-destructive">{register.fields._password.issues()?.[0].message}</span>
 
 				<InputGroup.Root>
 					<InputGroup.Addon>
@@ -95,9 +104,8 @@
 						type={checked ? "text" : "password"}
 					/>
 				</InputGroup.Root>
-				{#each register.fields._repeatPassword.issues() as issue}
-					<span class="text-destructive">{issue.message}</span>
-				{/each}
+				<span class="text-destructive">{register.fields._repeatPassword.issues()?.[0].message}</span
+				>
 			</Card.Content>
 			<Card.Footer class="flex-col gap-2">
 				<Button type="submit" class="w-full">
@@ -105,7 +113,10 @@
 					Konto erstellen
 				</Button>
 
-				<Button variant="outline" href="/login" class="w-full">Ich habe bereits ein Konto</Button>
+				<Button variant="outline" href="/login" class="w-full">
+					<UserRoundKey />
+					Ich habe bereits ein Konto
+				</Button>
 			</Card.Footer>
 		</form>
 	</Card.Root>

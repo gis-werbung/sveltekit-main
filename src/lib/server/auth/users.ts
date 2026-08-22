@@ -1,6 +1,6 @@
 import { db, users } from "$lib/server/db";
 import { eq } from "drizzle-orm";
-import { hash, verify } from "argon2";
+import { hash } from "argon2";
 
 export async function createUser({
 	email,
@@ -27,4 +27,7 @@ export function isUserModerator(user: DBTypes.OpenUser | undefined) {
 }
 export function isUserAdmin(user: DBTypes.OpenUser | undefined) {
 	return user && user.status === "admin";
+}
+export function isUserBanned(user: DBTypes.OpenUser | undefined) {
+	return user && user.status === "banned";
 }

@@ -2,6 +2,7 @@ import { env } from "$env/dynamic/private";
 import { jwtVerify, SignJWT } from "jose";
 import { db } from "$lib/server/db";
 import * as v from "valibot";
+import { FULL_ISO_DATE_REGEX } from "$lib/utils";
 
 if (!env.JWT_SECRET) throw new Error("JWT_SECRET is not set");
 
@@ -15,14 +16,14 @@ export enum JWTTokenTypes {
 const genericJWTSchema = v.object({
 	tokenType: v.enum(JWTTokenTypes),
 	userId: v.pipe(v.number(), v.integer()),
-	lastChanged: v.pipe(v.string(), v.isoDateTimeSecond())
+	lastChanged: v.pipe(v.string(), v.regex(FULL_ISO_DATE_REGEX))
 });
 type GenericJWT = v.InferOutput<typeof genericJWTSchema>;
 
 export function createJWT(
 	user: DBTypes.OpenUser,
 	tokenType = JWTTokenTypes.LoginToken,
-	expirationTime: number | string | Date,
+	expirationTime: number | string | Date = "30d",
 	additionalData?: Record<string, any>
 ) {
 	return new SignJWT({

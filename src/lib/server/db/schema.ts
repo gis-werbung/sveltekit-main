@@ -33,7 +33,7 @@ export const users = d.snakeCase.table("users", {
 	email: d.text().notNull().unique(),
 	isEmailVerified: d.boolean().default(false).notNull(),
 	name: d.text().notNull().unique(),
-	passwordHash: d.char({ length: 43 }).notNull(),
+	passwordHash: d.char({ length: 97 }).notNull(),
 	status: accountStatusEnum().default("user").notNull(),
 	balance: d.integer().default(0),
 
