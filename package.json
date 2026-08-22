@@ -33,7 +33,6 @@
 		"drizzle-orm": "^1.0.0-rc.4",
 		"jose": "^6.2.9",
 		"mode-watcher": "^1.1.0",
-		"postgres": "^3.4.9",
 		"prettier": "^3.8.3",
 		"prettier-plugin-svelte": "^4.1.0",
 		"prettier-plugin-tailwindcss": "^0.8.0",
@@ -47,5 +46,9 @@
 		"typescript": "^6.0.3",
 		"valibot": "^1.4.2",
 		"vite": "^8.0.16"
+	},
+	"dependencies": {
+		"@electric-sql/pglite": "^0.5.5",
+		"postgres": "^3.4.9"
 	}
 }
