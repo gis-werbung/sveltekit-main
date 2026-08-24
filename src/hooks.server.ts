@@ -1,5 +1,6 @@
 import type { Handle } from "@sveltejs/kit";
 import { validateJWT } from "$lib/server/auth/jwt";
+import { isUserBanned } from "$lib/server/auth/users";
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Auth
@@ -7,11 +8,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const jwt = event.cookies.get("token");
 	if (jwt) {
 		const result = await validateJWT(jwt);
+		const shouldDelete = !result || isUserBanned(result.user);
 
-		if (result) {
-			event.locals.user = result.user;
-		} else {
+		if (shouldDelete) {
 			event.cookies.delete("token", { path: "/" });
+		} else if (result) {
+			event.locals.user = result.user;
 		}
 	}
 

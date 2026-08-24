@@ -12,7 +12,6 @@
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button";
-	import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
 
 	let checked = $state(false);
 </script>
@@ -85,17 +84,17 @@
 					Anmelden
 				</Button>
 
-				<ButtonGroup class="w-full">
-					<Button variant="outline" href="/register" class="w-1/2">
+				<div class="grid w-full grid-cols-2 gap-2">
+					<Button variant="outline" href="/register">
 						<UserRoundPlus />
 						Registrieren
 					</Button>
 
-					<Button variant="outline" class="w-1/2">
+					<Button variant="outline" href="/forgot-password">
 						<BadgeQuestionMark />
 						Passwort vergessen
 					</Button>
-				</ButtonGroup>
+				</div>
 			</Card.Footer>
 		</form>
 	</Card.Root>

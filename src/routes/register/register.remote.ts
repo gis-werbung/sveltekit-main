@@ -21,10 +21,10 @@ export const register = form(
 		),
 		_password: v.pipe(
 			v.string(),
-			v.nonEmpty("Bitte gib ein Password ein"),
-			v.minLength(8, "Dein Password muss mindestens 8 Zeichen haben")
+			v.nonEmpty("Bitte gib ein Passwort ein"),
+			v.minLength(8, "Dein Passwort muss mindestens 8 Zeichen haben")
 		),
-		_repeatPassword: v.pipe(v.string(), v.nonEmpty("Bitte gib das Password erneut ein"))
+		_repeatPassword: v.pipe(v.string(), v.nonEmpty("Bitte gib das Passwort erneut ein"))
 	}),
 	async ({ name, email, _password, _repeatPassword }, issue) => {
 		try {

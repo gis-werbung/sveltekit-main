@@ -7,7 +7,7 @@
 		<p>Herzlich Willkommen bei GiS-Werbung.</p>
 		<p>Um Missbrauch vorzubeugen, bitten wir dich deine E-Mail Adresse zu bestätigen.</p>
 		<strong><a href="{{url}}">Klicke hier, um deine E-Mail zu bestätigen</a></strong>
-		<p>Dieser Link ist ab jetzt für 30 Minuten gültig</p>
+		<p>Dieser Link ist ab jetzt für 30 Minuten gültig.</p>
 		<p>Alternativ, öffne diesen Link in einem Browser deiner Wahl:</p>
 		<p>{{url}}</p>
 		<hr />
@@ -18,7 +18,7 @@
 			Mitteilung mit denen von unserer Seite.
 		</p>
 		<hr />
-    <p>"GiS Werbung" ist eine Schülerfirma des Gymnasium im Schloss</p>
-    <p>Bitte antworte nicht auf diese E-Mail. Solltest du Hilfe brauchen, schau im FAQ-Bereich oder frage beim Support nach.</p>
+		<p>"GiS Werbung" ist eine Schülerfirma des Gymnasium im Schloss.</p>
+		<p>Bitte antworte nicht auf diese E-Mail. Solltest du Hilfe brauchen, schau im FAQ-Bereich oder frage beim Support nach.</p>
 	</body>
 </html>

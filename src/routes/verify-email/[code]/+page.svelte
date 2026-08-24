@@ -2,7 +2,7 @@
 	import type { PageProps } from "./$types";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button";
-	import { House, MailCheck, MailX, SendHorizontal, UserRoundKey } from "@lucide/svelte";
+	import { House, Mail, MailCheck, MailX, SendHorizontal, UserRoundKey } from "@lucide/svelte";
 
 	const { data }: PageProps = $props();
 </script>
@@ -15,13 +15,20 @@
 	<Card.Root class="mx-3">
 		<Card.Header>
 			<div class="flex items-center gap-3">
-				{#if data.isCorrect}
+				{#if data.isAlreadyVerified}
+					<Mail size="64" strokeWidth="1.25" class="text-muted-foreground" />
+				{:else if data.isCorrect}
 					<MailCheck size="64" strokeWidth="1.25" class="text-muted-foreground" />
 				{:else}
 					<MailX size="64" strokeWidth="1.25" class="text-muted-foreground" />
 				{/if}
 				<div>
-					{#if data.isCorrect}
+					{#if data.isAlreadyVerified}
+						<Card.Title>Deine E-Mail ist bereits bestätigt</Card.Title>
+						<Card.Description>
+							Du musst nichts weiter tun, um mit GiS Werbung loszulegen
+						</Card.Description>
+					{:else if data.isCorrect}
 						<Card.Title>E-Mail bestätigt!</Card.Title>
 						<Card.Description>Viel Erfolg mit GiS Werbung</Card.Description>
 					{:else}
@@ -37,7 +44,7 @@
 		{#if !data.isCorrect && !data.isLoggedIn}
 			<Card.Content>
 				Du bist derzeit nicht angemeldet und kannst deswegen keinen neuen Code anfordern. Benutze
-				entweder ein Gerät, bei dem du angemeldet bist oder melde dich an.
+				entweder ein Gerät, bei dem du angemeldet bist oder melde dich auf diesem Gerät an.
 			</Card.Content>
 		{/if}
 

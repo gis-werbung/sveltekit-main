@@ -1,4 +1,5 @@
 Bestätige deine E-Mail
+----------------------
 
 Hallo {{name}}.
 Herzlich Willkommen bei GiS-Werbung.
@@ -8,8 +9,10 @@ Um Missbrauch vorzubeugen, bitten wir dich deine E-Mail Adresse zu bestätigen.
 Der Link ist ab jetzt für 30 Minuten gültig.
 
 Phishing Vorbeugen:
+-------------------
+
 GiS Werbung wird dich immer mit deinem vollständigen Namen anschreiben.
 Solltest du dir nicht sicher sein, ob eine Mitteilung echt ist, vergleiche die Infos aus der Mitteilung mit denen von unserer Seite.
 
-"GiS Werbung" ist eine Schülerfirma des Gymnasium im Schloss
+"GiS Werbung" ist eine Schülerfirma des Gymnasium im Schloss.
 Bitte antworte nicht auf diese E-Mail. Solltest du Hilfe brauchen, schau im FAQ-Bereich oder frage beim Support nach.

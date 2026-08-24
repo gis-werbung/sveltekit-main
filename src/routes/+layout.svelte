@@ -7,7 +7,7 @@
 	let { children } = $props();
 </script>
 
-<Toaster />
+<Toaster position="top-center" />
 <ModeWatcher />
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 {@render children()}

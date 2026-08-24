@@ -2,7 +2,7 @@
 	import { resendEmailCode } from "./verify-email.remote";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button";
-	import { MailQuestionMark, SendHorizontal } from "@lucide/svelte";
+	import { MailSearch, SendHorizontal } from "@lucide/svelte";
 	import { Countdown } from "$lib/components/Countdown.svelte";
 	import { toast } from "svelte-sonner";
 	import { onDestroy } from "svelte";
@@ -35,11 +35,11 @@
 	<Card.Root class="mx-3">
 		<Card.Header>
 			<div class="flex items-center gap-3">
-				<MailQuestionMark size="64" strokeWidth="1.25" class="text-muted-foreground" />
+				<MailSearch size="64" strokeWidth="1.25" class="text-muted-foreground" />
 				<div>
 					<Card.Title>Bestätige deine E-Mail</Card.Title>
 					<Card.Description>
-						Um Missbrauch vorzubeugen, bitten wir dich deine E-Mail Adresse zu bestätigen.
+						Um Missbrauch vorzubeugen, bitten wir dich deine E-Mail Adresse zu bestätigen
 					</Card.Description>
 				</div>
 			</div>

@@ -14,7 +14,7 @@ export const login = form(
 			v.nonEmpty("Bitte gib eine E-Mail an"),
 			v.email("Bitte gib eine gültige E-Mail an")
 		),
-		_password: v.pipe(v.string(), v.nonEmpty("Bitte gib ein Password ein"))
+		_password: v.pipe(v.string(), v.nonEmpty("Bitte gib ein Passwort ein"))
 	}),
 	async ({ email, _password }, issue) => {
 		const user = await db.query.users.findFirst({ where: { email } });
@@ -28,7 +28,7 @@ export const login = form(
 		}
 
 		if (isUserBanned(user)) {
-			return invalid("Ihr Konto ist gesperrt. Bitte schau in deinem E-Mail-Postfach nach");
+			return invalid("Dein Konto ist gesperrt. Bitte schau in deinem E-Mail-Postfach nach");
 		}
 
 		const token = await createJWT(user);
