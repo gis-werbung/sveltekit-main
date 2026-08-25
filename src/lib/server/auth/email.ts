@@ -1,5 +1,5 @@
-import verifyText from "$lib/texts/verifyEmail.txt?raw";
-import verifyHTML from "$lib/texts/verifyEmail.html.txt?raw";
+import verifyText from "$lib/mails/verifyEmail.txt?raw";
+import verifyHTML from "$lib/mails/verifyEmail.html.txt?raw";
 import { db, users } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import { createJWT, JWTTokenTypes, validateJWT } from "./jwt";
