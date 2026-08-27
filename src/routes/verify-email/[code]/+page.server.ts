@@ -1,4 +1,4 @@
-import { validateEmailVerifyJWT } from "$lib/server/auth/email";
+import { validateEmailVerifyJWT } from "$lib/server/email/emailVerify";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ params, locals }) => {

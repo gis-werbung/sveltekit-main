@@ -10,7 +10,8 @@ const jwtSecretKey = new TextEncoder().encode(env.JWT_SECRET);
 
 export enum JWTTokenTypes {
 	LoginToken = "login_token",
-	EmailVerify = "email_verify"
+	EmailVerify = "email_verify",
+	ResetPassword = "reset_password"
 }
 
 const genericJWTSchema = v.object({

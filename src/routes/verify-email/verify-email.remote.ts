@@ -1,5 +1,5 @@
 import { command, form, getRequestEvent } from "$app/server";
-import { sendVerificationEmail } from "$lib/server/auth/email";
+import { sendVerificationEmail } from "$lib/server/email/verifyEmail";
 import { db, users } from "$lib/server/db";
 import { error, invalid, redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";

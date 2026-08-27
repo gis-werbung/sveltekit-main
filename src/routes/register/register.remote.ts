@@ -1,6 +1,6 @@
 import { dev } from "$app/env";
 import { form, getRequestEvent } from "$app/server";
-import { sendVerificationEmail } from "$lib/server/auth/email";
+import { sendVerificationEmail } from "$lib/server/email/verifyEmail";
 import { createJWT } from "$lib/server/auth/jwt";
 import { createUser } from "$lib/server/auth/users";
 import { DBConflictError, handleDbError } from "$lib/server/db/errorHandling";
