@@ -8,8 +8,6 @@ const disableEmailVerification = env.SKIP_EMAIL_VERIFICATION === "true";
 if (disableEmailVerification) console.warn("SkipEmailVerification is enabled");
 
 export const load = (async ({ locals }) => {
-	await db.update(users).set({ isEmailVerified: false });
-
 	if (!locals.user) redirect(307, "/login");
 	if (!locals.user.isEmailVerified) {
 		if (disableEmailVerification) {
