@@ -37,7 +37,7 @@ export const login = form(
 		cookies.set("token", token, {
 			httpOnly: true,
 			secure: !dev,
-			sameSite: "strict",
+			sameSite: "lax",
 			path: "/",
 			maxAge: 2592000
 		});

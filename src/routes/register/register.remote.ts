@@ -33,7 +33,6 @@ export const register = form(
 			}
 
 			const user = await createUser({ name, email, password: _password });
-			sendVerificationEmail(user);
 
 			const token = await createJWT(user);
 			const { cookies } = getRequestEvent();
@@ -41,11 +40,16 @@ export const register = form(
 			cookies.set("token", token, {
 				httpOnly: true,
 				secure: !dev,
-				sameSite: "strict",
+				sameSite: "lax",
 				path: "/",
 				maxAge: 2592000
 			});
 
+			try {
+				await sendVerificationEmail(user);
+			} catch {
+				redirect(303, "/verify-email?errored=true");
+			}
 			redirect(303, "/app");
 		} catch (e) {
 			const dbError = handleDbError(e);
