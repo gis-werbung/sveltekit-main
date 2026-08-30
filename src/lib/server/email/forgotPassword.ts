@@ -10,7 +10,7 @@ export async function sendResetPasswordEmail(user: DBTypes.OpenUser) {
 	const resetCode = await createPasswordResetJWT(user);
 	const resetURL = constructUrl("reset-password/" + resetCode);
 
-	const sendEmail = assembleEmail(ForgotPassword, user, { url: resetURL });
+	const sendEmail = await assembleEmail(ForgotPassword, user, { url: resetURL });
 
 	try {
 		await sendEmail();

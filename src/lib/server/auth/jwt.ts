@@ -3,6 +3,9 @@ import { jwtVerify, SignJWT } from "jose";
 import { db } from "$lib/server/db";
 import * as v from "valibot";
 import { FULL_ISO_DATE_REGEX } from "$lib/utils";
+import type { Cookies } from "@sveltejs/kit";
+import { dev } from "$app/env";
+import { getRequestEvent } from "$app/server";
 
 if (!env.JWT_SECRET) throw new Error("JWT_SECRET is not set");
 
@@ -85,4 +88,17 @@ export async function validateJWT(
 	} catch {
 		return null;
 	}
+}
+
+export async function setLoginCookie(user: DBTypes.OpenUser) {
+	const { cookies } = getRequestEvent();
+	const token = await createJWT(user);
+
+	cookies.set("token", token, {
+		httpOnly: true,
+		secure: !dev,
+		sameSite: "lax",
+		path: "/",
+		maxAge: 2592000
+	});
 }

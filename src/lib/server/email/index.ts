@@ -1,6 +1,8 @@
 import * as mails from "$lib/mails";
 import { env } from "$env/dynamic/private";
 import { createTransport } from "nodemailer";
+import { getRequestEvent } from "$app/server";
+import { formatLocationData, getBrowserInfo, getLocationData } from "../identification";
 
 if (!env.SITE_HOME_URL) throw new Error("SITE_HOME_URL is not set");
 if (!env.SMTP_HOST) throw new Error("SMTP_HOST is not set");
@@ -33,7 +35,7 @@ export function constructUrl(pathname: string) {
  * await sendEmail();
  * ```
  */
-export function assembleEmail(
+export async function assembleEmail(
 	bundle: mails.MailBundle,
 	user: DBTypes.OpenUser,
 	vars: Record<string, string> = {}
@@ -46,6 +48,40 @@ export function assembleEmail(
 	for (const filter of Object.entries(vars)) {
 		text = text.replaceAll(...filter);
 		html = html.replaceAll(...filter);
+	}
+
+	if (bundle.requiresIdentification) {
+		const { getClientAddress, request } = getRequestEvent();
+
+		const loc = await getLocationData(getClientAddress());
+		const locString = formatLocationData(loc);
+
+		const browser = getBrowserInfo(request.headers.get("User-Agent"));
+		const date = new Date().toLocaleString("de-DE");
+		const proxyString = loc.proxy ? "Ja" : "Nein";
+
+		const identificationText = `
+			Genauere Details:
+			- Zeitpunkt: ${date}
+			- Ort: ${locString}
+			- Internetanbieter: ${loc.isp}
+			- VPN-Verdacht: ${proxyString}
+			- Browser / Gerät: ${browser}
+			`;
+
+		const identificationHtml = /*html*/ `
+			<p>Genauere Details:</p>
+			<ul>
+				<li>Zeitpunkt: ${date}</li>
+				<li>Ort: ${locString}</li>
+				<li>Internetanbieter: ${loc.isp}</li>
+				<li>VPN-Verdacht: ${proxyString}</li>
+				<li>Browser / Gerät: ${browser}</li>
+			</ul>
+			`;
+
+		text = text.replace("%identification%", identificationText);
+		html = html.replace("%identification%", identificationHtml);
 	}
 
 	return (forceEmail?: string) =>

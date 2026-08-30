@@ -32,7 +32,7 @@ export async function sendVerificationEmail(user: DBTypes.OpenUser) {
 	const verificationCode = await createEmailVerifyJWT(user);
 	const verificationURL = constructUrl("verify-email/" + verificationCode);
 
-	const sendEmail = assembleEmail(VerifyEmail, user, { url: verificationURL });
+	const sendEmail = await assembleEmail(VerifyEmail, user, { url: verificationURL });
 
 	try {
 		await sendEmail();

@@ -1,7 +1,6 @@
-import { dev } from "$app/env";
 import { form, getRequestEvent } from "$app/server";
 import { sendVerificationEmail } from "$lib/server/email/verifyEmail";
-import { createJWT } from "$lib/server/auth/jwt";
+import { setLoginCookie } from "$lib/server/auth/jwt";
 import { createUser } from "$lib/server/auth/users";
 import { DBConflictError, handleDbError } from "$lib/server/db/errorHandling";
 import { invalid, redirect } from "@sveltejs/kit";
@@ -34,16 +33,8 @@ export const register = form(
 
 			const user = await createUser({ name, email, password: _password });
 
-			const token = await createJWT(user);
 			const { cookies } = getRequestEvent();
-
-			cookies.set("token", token, {
-				httpOnly: true,
-				secure: !dev,
-				sameSite: "lax",
-				path: "/",
-				maxAge: 2592000
-			});
+			await setLoginCookie(user);
 
 			try {
 				await sendVerificationEmail(user);
@@ -62,6 +53,7 @@ export const register = form(
 						return invalid(issue.name("Ein Konto mit dem selben Namen existiert bereits"));
 				}
 			}
+			throw e;
 		}
 	}
 );

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { resendEmailCode, changeEmail } from "./verify-email.remote";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import * as Dialog from "$lib/components/ui/dialog/index.js";
-	import * as Drawer from "$lib/components/ui/drawer/index.js";
+	import { GenericDialog, isLarge } from "$lib/components/Reactivity.svelte";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Alert from "$lib/components/ui/alert/index.js";
 	import { Button, buttonVariants } from "$lib/components/ui/button";
@@ -11,7 +10,6 @@
 	import { toast } from "svelte-sonner";
 	import { onDestroy, onMount, tick } from "svelte";
 	import { Spinner } from "$lib/components/ui/spinner";
-	import { MediaQuery } from "svelte/reactivity";
 	import { replaceState } from "$app/navigation";
 	import type { PageProps } from "./$types";
 	import { isHttpError } from "@sveltejs/kit";
@@ -31,9 +29,6 @@
 	const { data }: PageProps = $props();
 	const countdown = new Countdown(15);
 	let isChangeOpen = $state(false);
-
-	const large = new MediaQuery("min-width: 40rem");
-	const GenericDialog = $derived(large.current ? Dialog : Drawer);
 
 	onDestroy(() => {
 		countdown.stopCountdown();
@@ -63,25 +58,23 @@
 		<form
 			{...changeEmail.enhance(async (form) => {
 				const email = form.fields.email.value()!;
-				try {
-					if (await form.submit()) {
-						form.element.reset();
-						isChangeOpen = false;
-						toast.success("Deine E-Mail-Addresse wurde geändert und eine neue E-Mail verschickt");
-						data.email = email;
+				const promise = form.submit();
+				promise.then(() => {
+					data.email = email;
+					isChangeOpen = false;
+				});
+
+				toast.promise(promise, {
+					success: "Deine E-Mail-Addresse wurde geändert und eine neue E-Mail verschickt",
+					error: (e) => {
+						if (isHttpError(e) && e.body.message === "Failed to send E-Mail") {
+							data.email = email;
+							isChangeOpen = false;
+							return "Zwar konnte deine E-Mail-Addresse geändert werden, jedoch konnte keine E-Mail verschickt werden. Probiere es später nochmal";
+						}
+						return "Die Anfrage konnte vom Server nicht verarbeitet werden. Probiere es später nochmal";
 					}
-				} catch (e) {
-					if (isHttpError(e) && e.body.message === "Failed to send E-Mail") {
-						toast.warning(
-							"Zwar konnte deine E-Mail-Addresse geändert werden, jedoch konnte keine E-Mail verschickt werden. Probiere es später nochmal"
-						);
-						data.email = email;
-					} else {
-						toast.error(
-							"Die Anfrage konnte vom Server nicht verarbeitet werden. Probiere es später nochmal"
-						);
-					}
-				}
+				});
 			})}
 			class="mx-auto w-full max-w-md not-sm:px-4 not-sm:*:px-0! sm:contents"
 		>
@@ -125,7 +118,7 @@
 				<Button type="submit" disabled={countdown.seconds > 0} class="tabular-nums">
 					{#if countdown.seconds > 0}
 						<Spinner />
-						{#if large.current}
+						{#if isLarge}
 							Änderungen übernehmen (Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if})
 						{:else}
 							Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if}
@@ -181,7 +174,7 @@
 			<Button class="w-full tabular-nums" onclick={resend} disabled={countdown.seconds > 0}>
 				{#if countdown.seconds > 0}
 					<Spinner />
-					{#if large.current}
+					{#if isLarge}
 						Sende eine neue E-Mail (Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if})
 					{:else}
 						Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if}
