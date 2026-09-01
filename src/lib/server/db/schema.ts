@@ -1,11 +1,11 @@
 import * as d from "drizzle-orm/pg-core";
-import { defineRelations } from "drizzle-orm";
 
 export const accountStatusEnum = d.pgEnum("account_status", [
 	"user",
 	"admin",
 	"moderator",
-	"banned"
+	"banned",
+	"deleted"
 ]);
 
 export const advertisementStatusEnum = d.pgEnum("advertisement_status", [
@@ -17,13 +17,26 @@ export const advertisementStatusEnum = d.pgEnum("advertisement_status", [
 	"auto_paused"
 ]);
 
+export const supportStatusEnum = d.pgEnum("support_status", [
+	"open",
+	"resolved",
+	"closed",
+	"answered_in_faq"
+]);
+
+export const supportMessageStatusEnum = d.pgEnum("support_message_status", [
+	"awaitingUserResponse",
+	"awaitingModResponse"
+]);
+
 export const users = d.snakeCase.table("users", {
 	id: d.serial().primaryKey(),
 	email: d.text().notNull().unique(),
+	isEmailVerified: d.boolean().default(false).notNull(),
 	name: d.text().notNull().unique(),
-	passwordHash: d.char({ length: 43 }).notNull(),
+	passwordHash: d.char({ length: 97 }).notNull(),
 	status: accountStatusEnum().default("user").notNull(),
-	balance: d.integer(),
+	balance: d.integer().default(0),
 
 	createdAt: d.timestamp().defaultNow().notNull(),
 	updatedAt: d.timestamp().defaultNow().notNull()
@@ -45,11 +58,22 @@ export const advertisements = d.snakeCase.table("advertisements", {
 	videoUpgradeBooked: d.boolean().notNull(),
 
 	ownerId: d.integer().notNull(),
-	fileId: d.integer().notNull()
+	fileId: d.integer().notNull(),
+
+	createdAt: d.timestamp().defaultNow().notNull(),
+	// Users can set a date on which the status will automatically be set to "accepted" if it is paused
+	launchAt: d.timestamp(),
+	// Users can set an expiary on which the ad will not be shown anymore and the subscription will be cancelled
+	expireAt: d.timestamp()
 });
 
-export const adSupportChat = d.snakeCase.table("ad_support_chat", {
-	advertisementId: d.integer().primaryKey()
+export const supportChat = d.snakeCase.table("support_chat", {
+	id: d.serial().primaryKey(),
+	openedAt: d.timestamp().defaultNow().notNull(),
+	closedAt: d.timestamp(),
+	authorID: d.integer().notNull(),
+	status: supportStatusEnum().default("open").notNull(),
+	messageStatus: supportMessageStatusEnum()
 });
 
 export const supportMessage = d.snakeCase.table("message", {
@@ -59,53 +83,22 @@ export const supportMessage = d.snakeCase.table("message", {
 	content: d.text().notNull()
 });
 
-export const relations = defineRelations(
-	{ users, files, advertisements, adSupportChat, supportMessage },
-	(r) => ({
-		advertisements: {
-			owner: r.one.users({
-				from: r.advertisements.ownerId,
-				to: r.users.id,
-				optional: false,
-				alias: "owner"
-			}),
-			file: r.one.files({
-				from: r.advertisements.fileId,
-				to: r.files.id,
-				optional: false,
-				alias: "file-usage"
-			}),
-			supportChat: r.one.adSupportChat({
-				from: r.advertisements.id,
-				to: r.adSupportChat.advertisementId,
-				optional: false,
-				alias: "ad-support-chat"
-			})
-		},
-		files: {
-			owner: r.one.users({
-				from: r.files.ownerId,
-				to: r.users.id,
-				optional: false,
-				alias: "file-owner"
-			}),
-			advertisements: r.many.advertisements({ alias: "file-usage" })
-		},
-		users: {
-			advertisements: r.many.advertisements({ alias: "owner" }),
-			files: r.many.files({ alias: "file-owner" })
-		},
-		supportMessage: {
-			chat: r.one.adSupportChat({
-				from: r.supportMessage.chatId,
-				to: r.adSupportChat.advertisementId,
-				optional: false,
-				alias: "ad-support-message"
-			})
-		},
-		adSupportChat: {
-			advertisement: r.one.advertisements({ alias: "ad-support-chat" }),
-			messages: r.many.supportMessage({ alias: "ad-support-message" })
-		}
-	})
-);
+export const whatHappendEnum = d.pgEnum("what_happend", [
+	"created",
+	"deleted",
+	"modified",
+	"accessed", // E.G. for login
+	"banned", // Only for Users
+	"unbanned", // Only for Users
+	"verified", // Only for Users
+	"reviewed" // Only for Advertisements. Result in description
+]);
+
+export const auditLog = d.snakeCase.table("audit_log", {
+	happenedAt: d.timestamp().defaultNow().notNull(),
+	actorUserId: d.integer(),
+	advertisementId: d.integer(),
+	targetUserId: d.integer(),
+	description: d.text(),
+	whatHappend: whatHappendEnum().notNull()
+});

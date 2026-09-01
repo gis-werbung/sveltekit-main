@@ -1,0 +1,9 @@
+import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+
+export const load = (async ({ locals }) => {
+	if (!locals.user) redirect(307, "/login");
+	if (locals.user.isEmailVerified) redirect(307, "/app");
+
+	return { email: locals.user.email };
+}) satisfies PageServerLoad;

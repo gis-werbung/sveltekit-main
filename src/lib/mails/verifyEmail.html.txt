@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+	<body>
+		<h1>Bestätige deine E-Mail</h1>
+		<hr />
+		<h2>Hallo %name%!</h2>
+		<p>Herzlich Willkommen bei GiS-Werbung.</p>
+		<p>Um Missbrauch vorzubeugen, bitten wir dich deine E-Mail-Adresse zu bestätigen.</p>
+		<strong><a href="%url%">Klicke hier, um deine E-Mail zu bestätigen</a></strong>
+		<p>Dieser Link ist ab jetzt für 30 Minuten gültig.</p>
+		<p>Alternativ, öffne diesen Link in einem Browser deiner Wahl:</p>
+		<p>%url%</p>
+		<hr />
+		%footer%
+	</body>
+</html>
