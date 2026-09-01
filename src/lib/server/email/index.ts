@@ -44,9 +44,10 @@ export async function assembleEmail(
 
 	vars["name"] = user.name;
 
-	for (const filter of Object.entries(vars)) {
-		text = text.replaceAll(...filter);
-		html = html.replaceAll(...filter);
+	for (let [keyword, replacement] of Object.entries(vars)) {
+		keyword = `%${keyword}%`;
+		text = text.replaceAll(keyword, replacement);
+		html = html.replaceAll(keyword, replacement);
 	}
 
 	if (bundle.requiresIdentification) {
