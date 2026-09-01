@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { resendEmailCode, changeEmail } from "./verify-email.remote";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import { GenericDialog, isLarge } from "$lib/components/Reactivity.svelte";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Alert from "$lib/components/ui/alert/index.js";
+	import * as Dialog from "$lib/components/ui/dialog/index.js";
+	import * as Drawer from "$lib/components/ui/drawer/index.js";
+	import { MediaQuery } from "svelte/reactivity";
 	import { Button, buttonVariants } from "$lib/components/ui/button";
 	import { Info, Mail, MailSearch, PencilLine, SendHorizontal, X } from "@lucide/svelte";
 	import { Countdown } from "$lib/components/Countdown.svelte";
@@ -29,6 +31,9 @@
 	const { data }: PageProps = $props();
 	const countdown = new Countdown(15);
 	let isChangeOpen = $state(false);
+
+	const large = new MediaQuery("min-width: 40rem");
+	const GenericDialog = $derived(large.current ? Dialog : Drawer);
 
 	onDestroy(() => {
 		countdown.stopCountdown();
@@ -118,7 +123,7 @@
 				<Button type="submit" disabled={countdown.seconds > 0} class="tabular-nums">
 					{#if countdown.seconds > 0}
 						<Spinner />
-						{#if isLarge}
+						{#if large.current}
 							Änderungen übernehmen (Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if})
 						{:else}
 							Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if}
@@ -174,7 +179,7 @@
 			<Button class="w-full tabular-nums" onclick={resend} disabled={countdown.seconds > 0}>
 				{#if countdown.seconds > 0}
 					<Spinner />
-					{#if isLarge}
+					{#if large.current}
 						Sende eine neue E-Mail (Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if})
 					{:else}
 						Warte noch {countdown.seconds} Sekunde{#if countdown.seconds !== 1}n{/if}

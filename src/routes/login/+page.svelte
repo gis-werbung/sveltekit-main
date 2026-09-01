@@ -13,12 +13,17 @@
 	} from "@lucide/svelte";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import { GenericDialog } from "$lib/components/Reactivity.svelte";
+	import * as Dialog from "$lib/components/ui/dialog/index.js";
+	import * as Drawer from "$lib/components/ui/drawer/index.js";
+	import { MediaQuery } from "svelte/reactivity";
 	import { Button, buttonVariants } from "$lib/components/ui/button";
 	import { toast } from "svelte-sonner";
 
 	let checked = $state(false);
 	let isForgotOpen = $state(false);
+
+	const large = new MediaQuery("min-width: 40rem");
+	const GenericDialog = $derived(large.current ? Dialog : Drawer);
 </script>
 
 <svelte:head>
@@ -43,9 +48,9 @@
 		>
 			<GenericDialog.Header>
 				<GenericDialog.Title>Passwort vergessen?</GenericDialog.Title>
-				<GenericDialog.Description>
-					Schicke dir einen Link zum Zurücksetzen zu
-				</GenericDialog.Description>
+				<GenericDialog.Description
+					>Schicke dir einen Link zum Zurücksetzen zu</GenericDialog.Description
+				>
 			</GenericDialog.Header>
 
 			<div class="flex flex-col gap-3">
