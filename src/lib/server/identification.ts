@@ -1,3 +1,4 @@
+import { getRequestEvent } from "$app/server";
 import { parse } from "useragent";
 
 interface LocationData {
@@ -30,4 +31,49 @@ export function getBrowserInfo(useragent: string | null) {
 	const data = parse(useragent);
 
 	return data.toString().replaceAll(" 0.0.0", "");
+}
+
+export interface IdentBundle {
+	loc: LocationData;
+	locString: string;
+	browser: string;
+	date: string;
+	proxy: string;
+}
+
+export async function getIdentBundle(): Promise<IdentBundle> {
+	const { getClientAddress, request } = getRequestEvent();
+
+	const loc = await getLocationData(getClientAddress());
+	const locString = formatLocationData(loc);
+
+	const browser = getBrowserInfo(request.headers.get("User-Agent"));
+	const date = new Date().toLocaleString("de-DE");
+	const proxy = loc.proxy ? "Ja" : "Nein";
+
+	return { loc, locString, browser, date, proxy };
+}
+
+export function getIdentText(identBundle: IdentBundle) {
+	return `
+			Genauere Details:
+			- Zeitpunkt: ${identBundle.date}
+			- Ort: ${identBundle.locString}
+			- Internetanbieter: ${identBundle.loc.isp}
+			- VPN-Verdacht: ${identBundle.proxy}
+			- Browser / Gerät: ${identBundle.browser}
+			`;
+}
+
+export function getIdentHtml(identBundle: IdentBundle) {
+	return /*html*/ `
+			<p>Genauere Details:</p>
+			<ul>
+				<li>Zeitpunkt: ${identBundle.date}</li>
+				<li>Ort: ${identBundle.locString}</li>
+				<li>Internetanbieter: ${identBundle.loc.isp}</li>
+				<li>VPN-Verdacht: ${identBundle.proxy}</li>
+				<li>Browser / Gerät: ${identBundle.browser}</li>
+			</ul>
+			`;
 }

@@ -1,4 +1,5 @@
 import { form, getRequestEvent } from "$app/server";
+import { insertAudit } from "$lib/server/audit";
 import { JWTTokenTypes, setLoginCookie, validateJWT } from "$lib/server/auth/jwt";
 import { db, users } from "$lib/server/db";
 import { sendPasswordChangedEmail } from "$lib/server/email/emailChanged";
@@ -35,6 +36,11 @@ export const resetPassword = form(
 				.returning()
 		)[0];
 
+		await insertAudit({
+			whatHappend: "modified",
+			targetUserId: user.id,
+			description: "Passwort wurde über ein Zurücksetzungslink geändert"
+		});
 		await sendPasswordChangedEmail(user);
 		await setLoginCookie(user);
 	}

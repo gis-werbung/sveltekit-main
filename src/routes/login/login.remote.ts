@@ -1,4 +1,5 @@
 import { form } from "$app/server";
+import { insertAudit } from "$lib/server/audit";
 import { setLoginCookie } from "$lib/server/auth/jwt";
 import { isUserBanned } from "$lib/server/auth/users";
 import { db } from "$lib/server/db";
@@ -18,7 +19,7 @@ export const login = form(
 	}),
 	async ({ email, _password }, issue) => {
 		const user = await db.query.users.findFirst({ where: { email } });
-		if (!user) {
+		if (!user || user.status === "deleted") {
 			return invalid(issue.email("Mit dieser E-Mail-Adresse ist kein Konto verknüpft"));
 		}
 
@@ -31,6 +32,11 @@ export const login = form(
 			return invalid("Dein Konto ist gesperrt. Bitte schau in deinem E-Mail-Postfach nach");
 		}
 
+		await insertAudit({
+			whatHappend: "accessed",
+			targetUserId: user.id,
+			description: "Nutzer hat sich über Login-Seite angemeldet"
+		});
 		await setLoginCookie(user);
 
 		redirect(303, "/app");

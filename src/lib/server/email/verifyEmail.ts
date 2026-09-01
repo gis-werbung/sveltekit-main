@@ -4,6 +4,7 @@ import { createJWT, JWTTokenTypes, validateJWT } from "$lib/server/auth/jwt";
 import { db, users } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import * as v from "valibot";
+import { insertAudit } from "$lib/server/audit";
 
 const emailDataSchema = v.object({
 	email: v.pipe(v.string(), v.nonEmpty(), v.email())
@@ -22,6 +23,11 @@ export async function validateEmailVerifyJWT(jwt: string) {
 	if (result.user.email !== result.data.email) return false;
 
 	await db.update(users).set({ isEmailVerified: true }).where(eq(users.id, result.user.id));
+	await insertAudit({
+		whatHappend: "verified",
+		targetUserId: result.user.id,
+		description: "Nutzer hat sich über E-Mail-Code verifiziert"
+	});
 
 	return true;
 }

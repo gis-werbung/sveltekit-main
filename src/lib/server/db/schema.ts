@@ -4,7 +4,8 @@ export const accountStatusEnum = d.pgEnum("account_status", [
 	"user",
 	"admin",
 	"moderator",
-	"banned"
+	"banned",
+	"deleted"
 ]);
 
 export const advertisementStatusEnum = d.pgEnum("advertisement_status", [
@@ -80,4 +81,24 @@ export const supportMessage = d.snakeCase.table("message", {
 	chatId: d.integer().notNull(),
 	sendAt: d.timestamp().defaultNow().notNull(),
 	content: d.text().notNull()
+});
+
+export const whatHappendEnum = d.pgEnum("what_happend", [
+	"created",
+	"deleted",
+	"modified",
+	"accessed", // E.G. for login
+	"banned", // Only for Users
+	"unbanned", // Only for Users
+	"verified", // Only for Users
+	"reviewed" // Only for Advertisements. Result in description
+]);
+
+export const auditLog = d.snakeCase.table("audit_log", {
+	happenedAt: d.timestamp().defaultNow().notNull(),
+	actorUserId: d.integer(),
+	advertisementId: d.integer(),
+	targetUserId: d.integer(),
+	description: d.text(),
+	whatHappend: whatHappendEnum().notNull()
 });

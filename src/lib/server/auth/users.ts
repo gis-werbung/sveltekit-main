@@ -1,5 +1,5 @@
 import { db, users } from "$lib/server/db";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { hash } from "argon2";
 
 export async function createUser({
@@ -13,7 +13,23 @@ export async function createUser({
 }) {
 	const passwordHash = await hash(password);
 
-	return (await db.insert(users).values({ email, name, passwordHash }).returning())[0];
+	const result = await db
+		.insert(users)
+		.values({ email, name, passwordHash })
+		.onConflictDoUpdate({
+			target: users.email,
+			targetWhere: eq(users.status, "deleted"),
+			set: {
+				status: "user",
+				email,
+				name,
+				passwordHash,
+				updatedAt: sql`NOW()`,
+				createdAt: sql`NOW()`
+			}
+		})
+		.returning();
+	return result[0];
 }
 
 export async function changePassword(id: number, newPassword: string) {
@@ -29,5 +45,5 @@ export function isUserAdmin(user: DBTypes.OpenUser | undefined) {
 	return user && user.status === "admin";
 }
 export function isUserBanned(user: DBTypes.OpenUser | undefined) {
-	return user && user.status === "banned";
+	return user && (user.status === "banned" || user.status === "deleted");
 }

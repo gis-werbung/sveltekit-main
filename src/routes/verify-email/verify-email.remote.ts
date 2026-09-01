@@ -1,9 +1,10 @@
 import { command, form, getRequestEvent } from "$app/server";
 import { sendVerificationEmail } from "$lib/server/email/verifyEmail";
 import { db, users } from "$lib/server/db";
-import { error, invalid, redirect } from "@sveltejs/kit";
+import { error, invalid } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import * as v from "valibot";
+import { insertAudit } from "$lib/server/audit";
 
 export const resendEmailCode = command(async () => {
 	const { locals } = getRequestEvent();
@@ -36,6 +37,12 @@ export const changeEmail = form(
 			.update(users)
 			.set({ email })
 			.where(and(eq(users.id, locals.user.id), eq(users.isEmailVerified, false)));
+
+		await insertAudit({
+			whatHappend: "modified",
+			targetUserId: locals.user.id,
+			description: `Nutzer hat E-Mail-Addresse geändert. VON "${locals.user.email}" ZU "${email}"`
+		});
 
 		locals.user.email = email;
 

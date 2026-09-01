@@ -1,10 +1,13 @@
-import { form, getRequestEvent } from "$app/server";
+import { form } from "$app/server";
 import { sendVerificationEmail } from "$lib/server/email/verifyEmail";
 import { setLoginCookie } from "$lib/server/auth/jwt";
 import { createUser } from "$lib/server/auth/users";
 import { DBConflictError, handleDbError } from "$lib/server/db/errorHandling";
 import { invalid, redirect } from "@sveltejs/kit";
 import * as v from "valibot";
+import { auditLog, db } from "$lib/server/db";
+import { getIdentBundle, getIdentText } from "$lib/server/identification";
+import { insertAudit } from "$lib/server/audit";
 
 export const register = form(
 	v.object({
@@ -33,7 +36,11 @@ export const register = form(
 
 			const user = await createUser({ name, email, password: _password });
 
-			const { cookies } = getRequestEvent();
+			await insertAudit({
+				whatHappend: "created",
+				targetUserId: user.id,
+				description: "Nutzer wurde über Registrierungs-Seite erstellt"
+			});
 			await setLoginCookie(user);
 
 			try {

@@ -1,8 +1,7 @@
 import * as mails from "$lib/mails";
 import { env } from "$env/dynamic/private";
 import { createTransport } from "nodemailer";
-import { getRequestEvent } from "$app/server";
-import { formatLocationData, getBrowserInfo, getLocationData } from "../identification";
+import { getIdentBundle, getIdentHtml, getIdentText } from "$lib/server/identification";
 
 if (!env.SITE_HOME_URL) throw new Error("SITE_HOME_URL is not set");
 if (!env.SMTP_HOST) throw new Error("SMTP_HOST is not set");
@@ -51,34 +50,9 @@ export async function assembleEmail(
 	}
 
 	if (bundle.requiresIdentification) {
-		const { getClientAddress, request } = getRequestEvent();
-
-		const loc = await getLocationData(getClientAddress());
-		const locString = formatLocationData(loc);
-
-		const browser = getBrowserInfo(request.headers.get("User-Agent"));
-		const date = new Date().toLocaleString("de-DE");
-		const proxyString = loc.proxy ? "Ja" : "Nein";
-
-		const identificationText = `
-			Genauere Details:
-			- Zeitpunkt: ${date}
-			- Ort: ${locString}
-			- Internetanbieter: ${loc.isp}
-			- VPN-Verdacht: ${proxyString}
-			- Browser / Gerät: ${browser}
-			`;
-
-		const identificationHtml = /*html*/ `
-			<p>Genauere Details:</p>
-			<ul>
-				<li>Zeitpunkt: ${date}</li>
-				<li>Ort: ${locString}</li>
-				<li>Internetanbieter: ${loc.isp}</li>
-				<li>VPN-Verdacht: ${proxyString}</li>
-				<li>Browser / Gerät: ${browser}</li>
-			</ul>
-			`;
+		const identBundle = await getIdentBundle();
+		const identificationText = getIdentText(identBundle);
+		const identificationHtml = getIdentHtml(identBundle);
 
 		text = text.replace("%identification%", identificationText);
 		html = html.replace("%identification%", identificationHtml);
