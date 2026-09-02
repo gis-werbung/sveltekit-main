@@ -28,9 +28,6 @@
 	import Badge from "$lib/components/ui/badge/badge.svelte";
 	import { cn } from "$lib/utils";
 
-	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-	const sidebar = useSidebar();
-
 	let {
 		user,
 		isAdmin,
@@ -44,11 +41,9 @@
 			<Sidebar.MenuItem>
 				<Alert.Root
 					variant="destructive"
-					class={cn("bg-destructive/5 transition-all", !sidebar.open && "overflow-hidden")}
+					class="bg-destructive/5 transition-all group-data-[collapsible=icon]:overflow-hidden"
 				>
-					<BanknoteX
-						class={cn(!sidebar.open && "-translate-x-0.75", "transition-all duration-200")}
-					/>
+					<BanknoteX class="transition-all group-data-[collapsible=icon]:-translate-x-0.75" />
 					<!-- Example text -->
 					<Alert.Title>Fehlendes Guthaben:</Alert.Title>
 					<Alert.Description>3 Werbungen können nicht bezahlt werden</Alert.Description>
@@ -100,11 +95,12 @@
 					</Sidebar.MenuLink>
 					<Sidebar.MenuBadge>2</Sidebar.MenuBadge>
 				</Sidebar.MenuItem>
+			</Sidebar.Menu>
+		</Sidebar.Group>
 
-				{#if sidebar.open}
-					<Sidebar.Separator class="my-2" />
-				{/if}
-
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Erstellen</Sidebar.GroupLabel>
+			<Sidebar.Menu>
 				<Sidebar.MenuItem>
 					<Sidebar.MenuLink href="/app/create">
 						<FilePlus />
@@ -189,7 +185,7 @@
 	<Sidebar.Footer>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
-				<Sidebar.MenuLink href="/app/user">
+				<Sidebar.MenuLink href="/app/user" class="group-data-[collapsible=icon]:p-1!">
 					<Avatar {user} />
 
 					<div class="overflow-hidden text-ellipsis">
@@ -210,9 +206,7 @@
 				</Sidebar.MenuLink>
 			</Sidebar.MenuItem>
 
-			{#if sidebar.open}
-				<Sidebar.Separator class="my-2" />
-			{/if}
+			<Sidebar.Separator class="my-2 group-data-[collapsible=icon]:hidden" />
 
 			<Sidebar.MenuItem>
 				<Sidebar.MenuLink href="/app/deposit">
