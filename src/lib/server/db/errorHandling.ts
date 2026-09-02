@@ -21,7 +21,7 @@ export class DBError extends Error {
 
 const errorMap: Record<string, typeof DBError> = { "23505": DBConflictError };
 
-export function handleDbError(e: unknown) {
+export function handleDbError(e: unknown): DBError {
 	if (!(e instanceof DrizzleQueryError && e.cause instanceof pg.PostgresError)) throw e;
 	const pgerror = e.cause;
 
