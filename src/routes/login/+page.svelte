@@ -7,7 +7,7 @@
 		Eye,
 		UserRoundKey,
 		UserRoundPlus,
-		BadgeQuestionMark,
+		CircleQuestionMark,
 		X,
 		SendHorizontal
 	} from "@lucide/svelte";
@@ -155,7 +155,7 @@
 					</Button>
 
 					<Button variant="outline" onclick={() => (isForgotOpen = true)}>
-						<BadgeQuestionMark />
+						<CircleQuestionMark />
 						Passwort vergessen
 					</Button>
 				</div>
