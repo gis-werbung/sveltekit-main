@@ -28,6 +28,9 @@
 	import Badge from "$lib/components/ui/badge/badge.svelte";
 	import { cn } from "$lib/utils";
 
+	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
+	const sidebar = useSidebar();
+
 	let {
 		user,
 		isAdmin,
@@ -35,12 +38,17 @@
 	}: { user: DBTypes.OpenUser; isAdmin: boolean; isModerator: boolean } = $props();
 </script>
 
-<Sidebar.Root>
-	<Sidebar.Header>
+<Sidebar.Root collapsible="icon" class="text-nowrap">
+	<Sidebar.Header class="transition-all">
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
-				<Alert.Root variant="destructive">
-					<BanknoteX />
+				<Alert.Root
+					variant="destructive"
+					class={cn("bg-destructive/5 transition-all", !sidebar.open && "overflow-hidden")}
+				>
+					<BanknoteX
+						class={cn(!sidebar.open && "-translate-x-0.75", "transition-all duration-200")}
+					/>
 					<!-- Example text -->
 					<Alert.Title>Fehlendes Guthaben:</Alert.Title>
 					<Alert.Description>3 Werbungen können nicht bezahlt werden</Alert.Description>
@@ -93,7 +101,9 @@
 					<Sidebar.MenuBadge>2</Sidebar.MenuBadge>
 				</Sidebar.MenuItem>
 
-				<Sidebar.Separator class="my-2" />
+				{#if sidebar.open}
+					<Sidebar.Separator class="my-2" />
+				{/if}
 
 				<Sidebar.MenuItem>
 					<Sidebar.MenuLink href="/app/create">
@@ -182,7 +192,7 @@
 				<Sidebar.MenuLink href="/app/user">
 					<Avatar {user} />
 
-					<div class="overflow-hidden text-nowrap text-ellipsis">
+					<div class="overflow-hidden text-ellipsis">
 						<span class="font-medium">{user.name}</span>
 						<br />
 						<span class="text-xs">{user.email}</span>
@@ -200,7 +210,9 @@
 				</Sidebar.MenuLink>
 			</Sidebar.MenuItem>
 
-			<Sidebar.Separator class="my-2" />
+			{#if sidebar.open}
+				<Sidebar.Separator class="my-2" />
+			{/if}
 
 			<Sidebar.MenuItem>
 				<Sidebar.MenuLink href="/app/deposit">
