@@ -7,6 +7,7 @@ if (!env.SITE_HOME_URL) throw new Error("SITE_HOME_URL is not set");
 if (!env.SMTP_HOST) throw new Error("SMTP_HOST is not set");
 if (!env.SMTP_PASS) throw new Error("SMTP_PASS is not set");
 if (!env.SMTP_USER) throw new Error("SMTP_USER is not set");
+const disableEmail = env.SIMULATE_EMAIL === "true";
 
 const emailTransport = createTransport({
 	host: env.SMTP_HOST,
@@ -59,12 +60,18 @@ export async function assembleEmail(
 		html = html.replace("%identification%", identificationHtml);
 	}
 
-	return (forceEmail?: string) =>
-		emailTransport.sendMail({
-			from: '"GiS Werbung" <noreply@gis-werbung.de>',
-			to: forceEmail ?? user.email,
-			subject: bundle.subject,
-			html,
-			text
-		});
+	return (forceEmail?: string) => {
+		if (disableEmail) {
+			console.info("Simulate sending E-Mail", bundle.subject);
+			console.log("Vars:", vars);
+		} else {
+			emailTransport.sendMail({
+				from: '"GiS Werbung" <noreply@gis-werbung.de>',
+				to: forceEmail ?? user.email,
+				subject: bundle.subject,
+				html,
+				text
+			});
+		}
+	};
 }
