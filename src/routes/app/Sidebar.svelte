@@ -22,7 +22,8 @@
 		Asterisk,
 		BanknoteArrowUp,
 		BanknoteX,
-		ClipboardClock
+		ClipboardClock,
+		Wallet
 	} from "@lucide/svelte";
 	import { toast } from "svelte-sonner";
 	import { goto } from "$app/navigation";
@@ -142,6 +143,13 @@
 						<Sidebar.MenuLink href="/app/moderator/devices">
 							<Monitor />
 							Geräte Verwaltung
+						</Sidebar.MenuLink>
+					</Sidebar.MenuItem>
+
+					<Sidebar.MenuItem>
+						<Sidebar.MenuLink href="/app/moderator/finances">
+							<Wallet />
+							Finanzen
 						</Sidebar.MenuLink>
 					</Sidebar.MenuItem>
 				</Sidebar.Menu>

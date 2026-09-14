@@ -15,7 +15,7 @@
 </svelte:head>
 
 <header
-	class="sticky top-0 left-0 flex w-full justify-between gap-2 bg-card p-4 not-md:flex-col md:px-16"
+	class="sticky top-0 left-0 flex w-full justify-between gap-2 border-b bg-card p-4 not-md:flex-col md:px-16"
 >
 	<div class="flex items-center gap-3">
 		<OriginButton />
