@@ -3,6 +3,7 @@
 	import { Eye, Pencil, Search, SearchX } from "@lucide/svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
+	import { page as pageState } from "$app/state";
 	import * as Card from "$lib/components/ui/card";
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb";
 	import * as Pagination from "$lib/components/ui/pagination";
@@ -105,7 +106,7 @@
 						</Button>
 					{/if}
 
-					<Button href="/faq/{result.id}">
+					<Button href="/faq/{result.id}{pageState.url.search}">
 						<Eye />
 						Lesen
 					</Button>

@@ -3,6 +3,7 @@
 	import logo from "$lib/assets/logo_gross.svg";
 	import OriginButton from "../OriginButton.svelte";
 	import type { PageProps } from "./$types";
+	import { page } from "$app/state";
 
 	let { data }: PageProps = $props();
 
@@ -31,7 +32,7 @@
 				<Breadcrumb.Separator />
 
 				<Breadcrumb.Item>
-					<Breadcrumb.Link href="/faq">FAQ Bereich</Breadcrumb.Link>
+					<Breadcrumb.Link href="/faq{page.url.search}">FAQ Bereich</Breadcrumb.Link>
 				</Breadcrumb.Item>
 
 				<Breadcrumb.Separator />
