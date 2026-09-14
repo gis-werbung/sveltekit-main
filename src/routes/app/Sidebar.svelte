@@ -125,7 +125,7 @@
 					</Sidebar.MenuItem>
 
 					<Sidebar.MenuItem>
-						<Sidebar.MenuLink href="/app/moderator/support">
+						<Sidebar.MenuLink href="/app/moderator/faq-editor">
 							<MessagesSquare />
 							FAQ Editor
 						</Sidebar.MenuLink>

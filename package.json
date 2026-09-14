@@ -25,7 +25,7 @@
 		"@internationalized/date": "^3.12.3",
 		"@logtape/file": "^2.3.2",
 		"@logtape/logtape": "^2.3.2",
-		"@lucide/svelte": "^1.39.0",
+		"@lucide/svelte": "^1.46.0",
 		"@sveltejs/adapter-node": "^5.5.7",
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",

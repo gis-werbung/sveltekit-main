@@ -26,7 +26,7 @@
 				Zurück
 			</Button>
 
-			<Button class="w-full" href="/" variant="secondary">
+			<Button class="w-full" href="/" variant="outline">
 				<House />
 				Zur Startseite
 			</Button>

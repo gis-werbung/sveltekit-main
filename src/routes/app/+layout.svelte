@@ -31,7 +31,7 @@
 			</div>
 		</header>
 
-		<main class="flex flex-1 flex-col gap-4 p-4 px-64 pt-0">
+		<main class="flex flex-1 flex-col gap-4 p-4 pt-0 lg:px-64">
 			{@render children()}
 		</main>
 	</div>
