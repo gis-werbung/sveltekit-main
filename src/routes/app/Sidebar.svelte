@@ -21,7 +21,8 @@
 		Wrench,
 		Asterisk,
 		BanknoteArrowUp,
-		BanknoteX
+		BanknoteX,
+		ClipboardClock
 	} from "@lucide/svelte";
 	import { toast } from "svelte-sonner";
 	import { goto } from "$app/navigation";
@@ -131,6 +132,13 @@
 					</Sidebar.MenuItem>
 
 					<Sidebar.MenuItem>
+						<Sidebar.MenuLink href="/app/moderator/audit">
+							<ClipboardClock />
+							Audit-Log
+						</Sidebar.MenuLink>
+					</Sidebar.MenuItem>
+
+					<Sidebar.MenuItem>
 						<Sidebar.MenuLink href="/app/moderator/devices">
 							<Monitor />
 							Geräte Verwaltung
@@ -145,16 +153,16 @@
 				<Sidebar.GroupLabel class="text-destructive">Admin-Panel</Sidebar.GroupLabel>
 				<Sidebar.Menu>
 					<Sidebar.MenuItem>
-						<Sidebar.MenuLink href="/app/moderator/devices">
+						<Sidebar.MenuLink href="/app/admin/server">
 							<HardDrive />
 							Server Verwaltung
 						</Sidebar.MenuLink>
 					</Sidebar.MenuItem>
 
 					<Sidebar.MenuItem>
-						<Sidebar.MenuLink href="/app/moderator/devices">
+						<Sidebar.MenuLink href="/app/admin/users">
 							<UserCog />
-							Moderator Verwaltung
+							Nutzer Verwaltung
 						</Sidebar.MenuLink>
 					</Sidebar.MenuItem>
 				</Sidebar.Menu>
@@ -173,7 +181,7 @@
 				</Sidebar.MenuItem>
 
 				<Sidebar.MenuItem>
-					<Sidebar.MenuLink href="/app/support">
+					<Sidebar.MenuLink href="/faq?origin=app">
 						<CircleQuestionMark />
 						FAQ Bereich
 					</Sidebar.MenuLink>

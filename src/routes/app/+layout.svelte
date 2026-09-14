@@ -10,7 +10,7 @@
 
 <Sidebar.Provider>
 	<AppSidebar user={data.user} isAdmin={data.isAdmin} isModerator={data.isModerator} />
-	<div>
+	<div class="w-full">
 		<header
 			class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12"
 		>
@@ -31,7 +31,7 @@
 			</div>
 		</header>
 
-		<main class="flex flex-1 flex-col gap-4 p-4 pt-0">
+		<main class="flex flex-1 flex-col gap-4 p-4 px-64 pt-0">
 			{@render children()}
 		</main>
 	</div>

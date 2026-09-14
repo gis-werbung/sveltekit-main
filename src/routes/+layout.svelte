@@ -24,7 +24,7 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
 		class={cn(
-			"absolute right-2 bottom-2",
+			"fixed right-2 bottom-2",
 			buttonVariants({
 				variant: mode.current === "light" ? "default" : "secondary",
 				size: "icon-lg"
