@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>{page.status} | Gis Werbung</title>
+	<title>{page.status} | GiS Werbung</title>
 </svelte:head>
 
 <div class="absolute top-1/2 left-1/2 w-md -translate-1/2 not-sm:w-full">
