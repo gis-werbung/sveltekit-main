@@ -1,20 +1,20 @@
 <script lang="ts">
 	import type { PageProps } from "./$types";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import { Button } from "$lib/components/ui/button";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
+	import { Button } from "$lib/components/ui/button";
 	import { KeyRound, LogOut, UserRoundKey, UserRoundPen } from "@lucide/svelte";
-	import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
+	import { changePassword } from "./userPanel.remote";
+
 	let { data }: PageProps = $props();
 </script>
 
-<div class="grid gap-1 lg:grid-cols-2"></div>
 <Card.Root>
 	<Card.Header>
 		<Card.Title>Passwort ändern</Card.Title>
 		<Card.Description>Card Description</Card.Description>
 	</Card.Header>
-	<form>
+	<form {...changePassword}>
 		<Card.Content class="mb-3 flex flex-col gap-3">
 			<InputGroup.Root>
 				<InputGroup.Addon>
@@ -22,8 +22,9 @@
 					Aktuelles Passwort
 				</InputGroup.Addon>
 
-				<InputGroup.Input />
+				<InputGroup.Input {...changePassword.fields._current.as("password")} />
 			</InputGroup.Root>
+			<span class="text-destructive">{changePassword.fields._current.issues()?.[0].message}</span>
 
 			<InputGroup.Root>
 				<InputGroup.Addon>
@@ -31,8 +32,9 @@
 					Neues Passwort
 				</InputGroup.Addon>
 
-				<InputGroup.Input />
+				<InputGroup.Input {...changePassword.fields._new.as("password")} />
 			</InputGroup.Root>
+			<span class="text-destructive">{changePassword.fields._new.issues()?.[0].message}</span>
 
 			<InputGroup.Root>
 				<InputGroup.Addon>
@@ -40,8 +42,9 @@
 					Passwort wiederholen
 				</InputGroup.Addon>
 
-				<InputGroup.Input />
+				<InputGroup.Input {...changePassword.fields._repeat.as("password")} />
 			</InputGroup.Root>
+			<span class="text-destructive">{changePassword.fields._repeat.issues()?.[0].message}</span>
 		</Card.Content>
 
 		<Card.Footer class="flex gap-3 not-md:flex-col">
