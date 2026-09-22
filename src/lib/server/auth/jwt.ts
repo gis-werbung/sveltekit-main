@@ -80,7 +80,6 @@ export async function validateJWT(
 
 		const user = await db.query.users.findFirst({
 			where: { id: data.userId },
-			columns: { passwordHash: false }
 		});
 		if (user?.updatedAt.toISOString() !== data.lastChanged) return null;
 
