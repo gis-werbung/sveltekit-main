@@ -39,5 +39,8 @@ export const relations = defineRelations(schema, (r) => ({
 			optional: false,
 			alias: "support-messages"
 		})
+	},
+	faqEntries: {
+		creator: r.one.users({ from: r.faqEntries.creatorUserId, to: r.users.id, optional: false })
 	}
 }));

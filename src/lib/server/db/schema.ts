@@ -102,3 +102,14 @@ export const auditLog = d.snakeCase.table("audit_log", {
 	description: d.text(),
 	whatHappend: whatHappendEnum().notNull()
 });
+
+export const faqEntries = d.snakeCase.table("faq_entries", {
+	createdAt: d.date().notNull().defaultNow(),
+	changedAt: d.date().notNull().defaultNow(),
+	id: d.serial().notNull(),
+	creatorUserId: d.integer().notNull(),
+
+	title: d.text().notNull(),
+	description: d.text(),
+	content: d.text().notNull()
+});
