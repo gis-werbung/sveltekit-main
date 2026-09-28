@@ -92,7 +92,9 @@
 			<Card.Root class="w-full">
 				<Card.Header>
 					<Card.Title>{result.title}</Card.Title>
-					<Card.Description>{result.subtitle}</Card.Description>
+					{#if result.subtitle}
+						<Card.Description>{result.subtitle}</Card.Description>
+					{/if}
 				</Card.Header>
 				<Card.Content>
 					<p>Geschrieben von: {result.author}</p>
