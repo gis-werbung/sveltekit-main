@@ -104,8 +104,8 @@ export const auditLog = d.snakeCase.table("audit_log", {
 });
 
 export const faqEntries = d.snakeCase.table("faq_entries", {
-	createdAt: d.date().notNull().defaultNow(),
-	changedAt: d.date().notNull().defaultNow(),
+	createdAt: d.timestamp().notNull().defaultNow(),
+	changedAt: d.timestamp().notNull().defaultNow(),
 	id: d.serial().notNull(),
 	creatorUserId: d.integer().notNull(),
 

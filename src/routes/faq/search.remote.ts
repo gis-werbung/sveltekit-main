@@ -1,5 +1,6 @@
-import { query } from "$app/server";
-import { db } from "$lib/server/db";
+import { command, getRequestEvent, query } from "$app/server";
+import { db, faqEntries } from "$lib/server/db";
+import { sql } from "drizzle-orm";
 import * as v from "valibot";
 
 interface SearchResult {
@@ -11,17 +12,19 @@ interface SearchResult {
 }
 
 export const search = query(v.string(), async (searchTerm) => {
-	const settings = {
-		with: { creator: true }
-	};
-
-	if (searchTerm) {
-		// @ts-ignore
-		settings.where = { title: { like: searchTerm } };
-	}
-
 	// Wenn searchTerm === "" ist, werden alle Artikel gemeint
-	const dbResults = await db.query.faqEntries.findMany(settings);
+	const searchFn = db.query.faqEntries;
+
+	let dbResults = await searchFn.findMany({ with: { creator: true } });
+	const lowerTerm = searchTerm.toLowerCase();
+
+	if (searchTerm !== "") {
+		dbResults = dbResults.filter(
+			(v) =>
+				v.title.toLowerCase().includes(lowerTerm) ||
+				v.description?.toLowerCase().includes(lowerTerm)
+		);
+	}
 
 	const result: SearchResult[] = dbResults.map((v) => {
 		return {

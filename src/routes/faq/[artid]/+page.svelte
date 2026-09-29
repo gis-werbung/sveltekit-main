@@ -4,15 +4,13 @@
 	import OriginButton from "../OriginButton.svelte";
 	import type { PageProps } from "./$types";
 	import { page } from "$app/state";
+	import Markdown from "$lib/components/Markdown.svelte";
 
 	let { data }: PageProps = $props();
-
-	// TODO: Implement with db
-	let title = "Mein Artikel";
 </script>
 
 <svelte:head>
-	<title>{title} | FAQ Bereich | GiS Werbung</title>
+	<title>{data.title} | FAQ Bereich | GiS Werbung</title>
 </svelte:head>
 
 <header
@@ -38,7 +36,7 @@
 				<Breadcrumb.Separator />
 
 				<Breadcrumb.Item>
-					<Breadcrumb.Page>{title}</Breadcrumb.Page>
+					<Breadcrumb.Page>{data.title}</Breadcrumb.Page>
 				</Breadcrumb.Item>
 			</Breadcrumb.List>
 		</Breadcrumb.Root>
@@ -46,11 +44,5 @@
 </header>
 
 <main class="p-4 lg:px-64 lg:pt-16">
-	<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-		{title}
-	</h1>
-	<p class="leading-7 not-first:mt-6">
-		Ich tue jetzt so als wäre ich ein inhaltvoller Artikel. Nur leider berge ich ein Geheimnis. Ich
-		weiß von nichts, obgleich mein Name nicht Hase ist.
-	</p>
+	<Markdown source={data.content} />
 </main>
