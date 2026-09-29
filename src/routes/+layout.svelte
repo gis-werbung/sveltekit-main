@@ -7,6 +7,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import { cn } from "$lib/utils";
+	import { TooltipProvider } from "$lib/components/ui/tooltip";
 
 	let { children } = $props();
 </script>
@@ -16,6 +17,11 @@
 
 <!-- The little daemon that keeps dark and light mode alive -->
 <ModeWatcher />
+
+<!-- Tooltip render -->
+<TooltipProvider>
+	{@render children()}
+</TooltipProvider>
 
 <!-- Favicon -->
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
