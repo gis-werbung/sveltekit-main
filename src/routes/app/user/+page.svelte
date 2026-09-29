@@ -4,16 +4,36 @@
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import { Button } from "$lib/components/ui/button";
 	import { KeyRound, LogOut, UserRoundKey, UserRoundPen } from "@lucide/svelte";
-	import { changePassword } from "./userPanel.remote";
+	import { changePassword, logOutAll } from "./userPanel.remote";
+	import { toast } from "svelte-sonner";
 
 	let { data }: PageProps = $props();
+
+	function doLogOut() {
+		const promise = logOutAll();
+
+		toast.promise(promise, {
+			loading: "Alle anderen Sitzungen werden abgemeldet",
+			success: "Alle anderen Sitzungen wurden abgemeldet",
+			error: "Die Sitzungen konnten nicht abgemedet werden. Probiere es später nochmal"
+		});
+	}
 </script>
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>Passwort ändern</Card.Title>
-		<Card.Description>Card Description</Card.Description>
+		<div class="flex items-center gap-3">
+			<UserRoundKey size="64" strokeWidth="1.25" class="text-muted-foreground" />
+			<div>
+				<Card.Title>Passwort ändern</Card.Title>
+				<Card.Description>
+					Solltest du dein Passwort vergessen haben, verwende "Passwort Vergessen" auf der
+					Anmeldeseite
+				</Card.Description>
+			</div>
+		</div>
 	</Card.Header>
+
 	<form {...changePassword}>
 		<Card.Content class="mb-3 flex flex-col gap-3">
 			<InputGroup.Root>
@@ -22,7 +42,10 @@
 					Aktuelles Passwort
 				</InputGroup.Addon>
 
-				<InputGroup.Input {...changePassword.fields._current.as("password")} />
+				<InputGroup.Input
+					{...changePassword.fields._current.as("password")}
+					autocomplete="current-password"
+				/>
 			</InputGroup.Root>
 			<span class="text-destructive">{changePassword.fields._current.issues()?.[0].message}</span>
 
@@ -32,7 +55,10 @@
 					Neues Passwort
 				</InputGroup.Addon>
 
-				<InputGroup.Input {...changePassword.fields._new.as("password")} />
+				<InputGroup.Input
+					{...changePassword.fields._new.as("password")}
+					autocomplete="new-password"
+				/>
 			</InputGroup.Root>
 			<span class="text-destructive">{changePassword.fields._new.issues()?.[0].message}</span>
 
@@ -42,7 +68,10 @@
 					Passwort wiederholen
 				</InputGroup.Addon>
 
-				<InputGroup.Input {...changePassword.fields._repeat.as("password")} />
+				<InputGroup.Input
+					{...changePassword.fields._repeat.as("password")}
+					autocomplete="new-password"
+				/>
 			</InputGroup.Root>
 			<span class="text-destructive">{changePassword.fields._repeat.issues()?.[0].message}</span>
 		</Card.Content>
@@ -53,9 +82,9 @@
 				Passwort ändern
 			</Button>
 
-			<Button type="button" variant="outline" class="not-md:w-full">
+			<Button type="button" variant="outline" class="not-md:w-full" onclick={doLogOut}>
 				<LogOut />
-				Alle Geräte abmelden
+				Alle Sitzungen abmelden
 			</Button>
 		</Card.Footer>
 	</form>

@@ -1,4 +1,4 @@
-import { form, getRequestEvent } from "$app/server";
+import { command, form, getRequestEvent } from "$app/server";
 import { insertAudit } from "$lib/server/audit";
 import { setLoginCookie } from "$lib/server/auth/jwt";
 import { db, users } from "$lib/server/db";
@@ -50,3 +50,23 @@ export const changePassword = form(
 		await setLoginCookie(user);
 	}
 );
+
+export const logOutAll = command(async () => {
+	const { locals } = getRequestEvent();
+	if (!locals.user) error(403);
+
+	const user = (
+		await db
+			.update(users)
+			.set({ updatedAt: sql`NOW()` })
+			.where(eq(users.id, locals.user.id))
+			.returning()
+	)[0];
+
+	await insertAudit({
+		whatHappend: "modified",
+		targetUserId: user.id,
+		description: "Der Nutzer hat alle anderen Sitzungen über User-Panel abgemeldet"
+	});
+	await setLoginCookie(user);
+});
