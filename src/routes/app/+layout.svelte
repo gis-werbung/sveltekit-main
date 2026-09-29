@@ -3,6 +3,7 @@
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import { Separator } from "$lib/components/ui/separator";
 	import AppSidebar from "./Sidebar.svelte";
+	import logo from "$lib/assets/logo_gross.svg";
 	import type { LayoutProps } from "./$types";
 
 	const { data, children }: LayoutProps = $props();
@@ -17,8 +18,11 @@
 			<div class="flex items-center gap-2 px-4">
 				<Sidebar.Trigger class="-ms-1" />
 				<Separator orientation="vertical" class="me-2 data-[orientation=vertical]:h-4" />
+
+				<img src={logo} alt="GiS Werbung Logo" class="h-8 self-start" />
+
 				<Breadcrumb.Root>
-					<Breadcrumb.List>
+					<Breadcrumb.List class="text-xl">
 						<Breadcrumb.Item class="hidden md:block">
 							<Breadcrumb.Link href="/app">GiS Werbung</Breadcrumb.Link>
 						</Breadcrumb.Item>
@@ -31,7 +35,7 @@
 			</div>
 		</header>
 
-		<main class="flex flex-1 flex-col gap-4 p-4 pt-0 lg:px-64">
+		<main class="flex flex-1 flex-col gap-4 p-4 lg:px-64">
 			{@render children()}
 		</main>
 	</div>
