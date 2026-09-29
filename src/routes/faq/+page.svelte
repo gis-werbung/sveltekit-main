@@ -2,7 +2,7 @@
 	import { search } from "./search.remote";
 	import { Eye, Pencil, Search, SearchX } from "@lucide/svelte";
 	import { Button } from "$lib/components/ui/button";
-	import { Input } from "$lib/components/ui/input";
+	import * as InputGroup from "$lib/components/ui/input-group";
 	import { page as pageState } from "$app/state";
 	import * as Card from "$lib/components/ui/card";
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb";
@@ -50,28 +50,33 @@
 	</div>
 
 	<div class="flex items-center gap-2 md:w-1/3">
-		<Input
-			placeholder="Wonach suchst du?"
-			bind:value={searchTerm}
-			onkeydown={(event) => {
-				if (event.key === "Enter") lastSearchTerm = searchTerm;
-			}}
-		/>
+		<InputGroup.Root>
+			<InputGroup.Input
+				placeholder="Wonach suchst du?"
+				bind:value={searchTerm}
+				onkeydown={(event) => {
+					if (event.key === "Enter") lastSearchTerm = searchTerm;
+				}}
+			/>
+			<InputGroup.Addon>
+				<Search />
+			</InputGroup.Addon>
+		</InputGroup.Root>
 
 		<Button
-			size="icon"
+			class="not-md:size-8"
 			disabled={searchTerm.length === 0}
 			onclick={() => {
 				lastSearchTerm = searchTerm;
 			}}
 		>
 			<Search />
-			<span class="sr-only">Suchen</span>
+			<span class="not-lg:sr-only">Suchen</span>
 		</Button>
 	</div>
 </header>
 
-<main class="flex flex-col items-center gap-4 p-4 lg:mx-auto lg:w-1/3 lg:pt-16">
+<main class="flex flex-col items-center gap-4 p-4 lg:mx-auto lg:w-2/5 lg:min-w-lg lg:pt-16">
 	{#await search(lastSearchTerm)}
 		<Spinner class="size-8" />
 		<span>Suche...</span>
