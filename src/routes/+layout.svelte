@@ -19,9 +19,6 @@
 <ModeWatcher />
 
 <!-- Tooltip render -->
-<TooltipProvider>
-	{@render children()}
-</TooltipProvider>
 
 <!-- Favicon -->
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
@@ -60,4 +57,6 @@
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
-{@render children()}
+<TooltipProvider>
+	{@render children()}
+</TooltipProvider>
