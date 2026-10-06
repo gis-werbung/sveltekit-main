@@ -3,11 +3,12 @@
 	import favicon from "$lib/assets/favicon.svg";
 	import { ModeWatcher, mode, setMode, resetMode } from "mode-watcher";
 	import { Toaster } from "$lib/components/ui/sonner";
-	import { Sun, Moon, MonitorCog } from "@lucide/svelte";
+	import { Sun, Moon, MonitorCog, GlobeX, RefreshCw } from "@lucide/svelte";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import { cn } from "$lib/utils";
 	import { TooltipProvider } from "$lib/components/ui/tooltip";
+	import { Button } from "$lib/components/ui/button";
 
 	let { children } = $props();
 </script>
@@ -60,3 +61,31 @@
 <TooltipProvider>
 	{@render children()}
 </TooltipProvider>
+
+<noscript>
+	<div
+		class="color-sc fixed top-0 left-0 z-20 h-screen w-screen bg-black opacity-75 backdrop-blur-2xl"
+	></div>
+	<div class="fixed top-1/2 left-1/2 z-30 -translate-1/2 rounded bg-white p-8">
+		<h1 class="flex items-center gap-2 text-xl font-bold tracking-tight lg:text-2xl">
+			<GlobeX class="size-7" />
+			Diese Seite funktioniert nur mit JavaScript
+		</h1>
+		<p class="my-2 text-lg">
+			Derzeit ist JavaScript-Code auf dieser Seite deaktiviert. Dies könnte folgende Gründe haben:
+		</p>
+		<ul class="list-disc">
+			<li>Dein Browser unterstützt schlichtweg kein JavaScript</li>
+			<li>JavaScript ist browserweit deaktiviert</li>
+			<li>
+				Eine Erweiterung etc. hat JavaScript auf dieser Seite deaktiviert (z.B. NoScript oder uBlock
+				Origin)
+			</li>
+		</ul>
+
+		<Button href="/" class="mt-4">
+			<RefreshCw />
+			Erneut probieren
+		</Button>
+	</div>
+</noscript>
