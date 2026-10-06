@@ -3,6 +3,7 @@
 	import { Input } from "$lib/components/ui/input";
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import * as Card from "$lib/components/ui/card";
+	import * as Alert from "$lib/components/ui/alert";
 	import { Info, SendHorizontal, Trash, Upload } from "@lucide/svelte";
 	import type { PageProps } from "./$types";
 	import { slide } from "svelte/transition";
@@ -12,9 +13,28 @@
 
 	let { data }: PageProps = $props();
 
+	function calculatePrice(isProfit: boolean, isVideo: boolean, isLong: boolean): number {
+		let price = 0;
+
+		// TODO: Combine with DB
+		if (isProfit) price += 2;
+		if (isLong) price += 2;
+		if (isVideo) price += 2;
+
+		return price;
+	}
+
 	let isDragging = $state(false);
 	let files = $state<FileList>();
-	let value = $state();
+	// let value = $state();
+
+	let isProfit = $state(false);
+	let isVideo = $state(false);
+	let isLong = $state(false);
+	let maxLength = $derived(isLong ? 30 : 15);
+
+	let price = $derived(calculatePrice(isProfit, isVideo, isLong));
+	let mimeType = $derived(isVideo ? "video/" : "image/");
 </script>
 
 <form>
@@ -43,18 +63,18 @@
 		<span>2.</span>
 		<div class="flex flex-col gap-3">
 			Angaben zum Beworbenen:
-			<div class="flex items-center gap-3">
-				<Checkbox name="profit" />
-				<label for="profit">Mein Beworbenes erzielt Profit</label>
-			</div>
+			<label class="flex items-center gap-3">
+				<Checkbox bind:checked={isProfit} />
+				Mein Beworbenes erzielt Profit
+			</label>
 		</div>
 
 		<span>3.</span>
 		<div class="flex flex-col gap-3">
 			<span>Aufpreise:</span>
-			<div class="mygrid gap-3">
-				<Checkbox name="up-long" />
-				<label for="up-long">
+			<div class="flex flex-col gap-3">
+				<label class="flex items-center gap-3">
+					<Checkbox bind:checked={isLong} />
 					Längere Werbung
 					<Tooltip.Root>
 						<Tooltip.Trigger class="text-sidebar-primary">
@@ -69,8 +89,9 @@
 						</Tooltip.Content>
 					</Tooltip.Root>
 				</label>
-				<Checkbox name="up-video" />
-				<label for="up-video">
+
+				<label class="flex items-center gap-3">
+					<Checkbox bind:checked={isVideo} />
 					Video statt Bild
 					<Tooltip.Root>
 						<Tooltip.Trigger class="text-sidebar-primary">
@@ -91,7 +112,7 @@
 			<label
 				class="flex w-full cursor-pointer flex-col items-center gap-2 rounded border-2 border-dashed border-muted-foreground p-8 text-center transition-colors"
 				class:bg-muted={isDragging}
-				class:hidden={value}
+				// class:hidden={value}
 				ondragenter={() => (isDragging = true)}
 				ondragleave={() => (isDragging = false)}
 				ondrop={(e) => {
@@ -106,7 +127,7 @@
 					const fileItems = [...e.dataTransfer.items].filter((item) => item.kind === "file");
 					if (fileItems.length > 0) {
 						e.preventDefault();
-						if (fileItems.some((item) => item.type.startsWith("video/"))) {
+						if (fileItems.some((item) => item.type.startsWith(mimeType))) {
 							e.dataTransfer.dropEffect = "copy";
 						} else {
 							e.dataTransfer.dropEffect = "none";
@@ -127,57 +148,81 @@
 					{/key}
 				</div>
 				<p class="text-sm">
-					Akzeptiert gängige Videoformat<br />Empfohlenes Seitenverhältnis: 16:9
+					Akzeptiert gängige {isVideo ? "Video" : "Bild"}formate<br />Empfohlenes Seitenverhältnis:
+					16:9
 				</p>
 				<input
 					type="file"
 					class="hidden"
-					accept="video/*"
+					accept="{mimeType}*"
 					autocomplete="off"
 					bind:files
-					bind:value
+					// bind:value
 					required
 				/>
 			</label>
 
-			{#if files && value}
+			{#if files}
 				{const file = files[0]}
 				{const blob = new Blob([await file.arrayBuffer()], { type: file.type })}
 				{const url = URL.createObjectURL(blob)}
 				{let duration = $state(0)}
+
 				<Card.Root class="pt-0">
-					<!-- svelte-ignore a11y_media_has_caption -->
-					<video
-						src={url}
-						class="object-cove /r relative z-20 aspect-video w-full"
-						controls={true}
-						bind:duration
-					></video>
-					<Card.Header>
-						<Card.Title>{file.name}</Card.Title>
-						<Card.Description>
-							{secondStringify(duration)} /
-							{formatBytes(file.size)}
-						</Card.Description>
-					</Card.Header>
+					{#if isVideo}
+						<!-- svelte-ignore a11y_media_has_caption -->
+						<video
+							src={url}
+							class="relative z-20 aspect-video w-full object-cover"
+							controls={true}
+							bind:duration
+						></video>
+
+						<Card.Header>
+							<Card.Title>{file.name}</Card.Title>
+							<Card.Description>
+								{secondStringify(duration)} /
+								{formatBytes(file.size)}
+							</Card.Description>
+						</Card.Header>
+					{:else}
+						<!-- svelte-ignore a11y_missing_attribute -->
+						<img src={url} class="relative z-20 aspect-video w-full object-cover" />
+						<Card.Header>
+							<Card.Title>{file.name}</Card.Title>
+							<Card.Description>
+								{formatBytes(file.size)}
+							</Card.Description>
+						</Card.Header>
+					{/if}
+
 					<Card.Footer>
-						<Button
-							variant="destructive"
-							class="not-md:w-full"
-							onclick={() => {
-								value = null;
-							}}
-						>
+						<Button variant="destructive" class="not-md:w-full">
 							<Trash />
 							Entfernen
 						</Button>
 					</Card.Footer>
 				</Card.Root>
+
+				{#if isVideo && duration > 0}
+					{let remainingTime = $derived(Math.round(maxLength - duration))}
+					{#if remainingTime >= 2}
+						<Alert.Root>
+							<Info />
+							<Alert.Title>Dein Video könnte {remainingTime} Sekunden länger sein</Alert.Title>
+							<Alert.Description
+								>Dein Video darf {maxLength} Sekunden lang sein. Aktuell ist es {Math.round(
+									duration
+								)} Sekunden lang.
+							</Alert.Description>
+						</Alert.Root>
+					{/if}
+				{/if}
 			{/if}
 
 			<p class="mt-8">Kosten:</p>
 			<p class="tabular-nums">
-				<span class="text-bold text-4xl tabular-nums">0,00 €</span>
+				<span class="text-bold text-4xl tabular-nums">{price.toFixed(2).replace(".", ",")} €</span>
 				/ Monat
 			</p>
 
