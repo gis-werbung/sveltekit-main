@@ -142,7 +142,7 @@
 				</InputGroup.Root>
 				<span class="text-destructive">{login.fields._password.issues()?.[0].message}</span>
 			</Card.Content>
-			<Card.Footer class="flex-col gap-2">
+			<Card.Footer class="flex flex-col gap-2">
 				<Button type="submit" class="w-full">
 					<UserRoundKey />
 					Anmelden
