@@ -4,7 +4,7 @@
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import * as Card from "$lib/components/ui/card";
 	import * as Alert from "$lib/components/ui/alert";
-	import { Info, SendHorizontal, Trash, Upload } from "@lucide/svelte";
+	import { Image, Info, SendHorizontal, Trash, Upload, Videotape } from "@lucide/svelte";
 	import type { PageProps } from "./$types";
 	import { slide } from "svelte/transition";
 	import { Button } from "$lib/components/ui/button";
@@ -26,7 +26,7 @@
 
 	let isDragging = $state(false);
 	let files = $state<FileList>();
-	// let value = $state();
+	let hasFile = $state(false);
 
 	let isProfit = $state(false);
 	let isVideo = $state(false);
@@ -112,7 +112,7 @@
 			<label
 				class="flex w-full cursor-pointer flex-col items-center gap-2 rounded border-2 border-dashed border-muted-foreground p-8 text-center transition-colors"
 				class:bg-muted={isDragging}
-				// class:hidden={value}
+				class:hidden={hasFile && files?.[0]}
 				ondragenter={() => (isDragging = true)}
 				ondragleave={() => (isDragging = false)}
 				ondrop={(e) => {
@@ -121,6 +121,7 @@
 					const dt = new DataTransfer();
 					dt.items.add(e.dataTransfer.files[0]);
 					files = dt.files;
+					hasFile = true;
 				}}
 				ondragover={(e) => {
 					if (!e.dataTransfer) return;
@@ -135,7 +136,14 @@
 					}
 				}}
 			>
-				<Upload class="size-16" strokeWidth="1" />
+				<div class="flex gap-2">
+					<Upload class="size-16" strokeWidth="1" />
+					{#if isVideo}
+						<Videotape class="size-16" strokeWidth="1" />
+					{:else}
+						<Image class="size-16" strokeWidth="1" />
+					{/if}
+				</div>
 				<div class="flex flex-col">
 					{#key isDragging}
 						<p transition:slide>
@@ -154,15 +162,17 @@
 				<input
 					type="file"
 					class="hidden"
+					id="magicFileBox"
 					accept="{mimeType}*"
 					autocomplete="off"
 					bind:files
-					// bind:value
-					required
+					onchange={() => {
+						hasFile = Boolean(files?.[0]);
+					}}
 				/>
 			</label>
 
-			{#if files}
+			{#if hasFile && files?.[0]}
 				{const file = files[0]}
 				{const blob = new Blob([await file.arrayBuffer()], { type: file.type })}
 				{const url = URL.createObjectURL(blob)}
@@ -171,11 +181,7 @@
 				<Card.Root class="pt-0">
 					{#if isVideo}
 						<!-- svelte-ignore a11y_media_has_caption -->
-						<video
-							src={url}
-							class="relative z-20 aspect-video w-full object-cover"
-							controls={true}
-							bind:duration
+						<video src={url} class="relative z-20 w-full object-cover" controls={true} bind:duration
 						></video>
 
 						<Card.Header>
@@ -187,7 +193,7 @@
 						</Card.Header>
 					{:else}
 						<!-- svelte-ignore a11y_missing_attribute -->
-						<img src={url} class="relative z-20 aspect-video w-full object-cover" />
+						<img src={url} class="relative z-20 w-full object-cover" />
 						<Card.Header>
 							<Card.Title>{file.name}</Card.Title>
 							<Card.Description>
@@ -197,7 +203,19 @@
 					{/if}
 
 					<Card.Footer>
-						<Button variant="destructive" class="not-md:w-full">
+						<Button
+							variant="destructive"
+							class="not-md:w-full"
+							onclick={() => {
+								const elem: HTMLInputElement | null = document.querySelector(
+									"input#magicFileBox[type=file]"
+								);
+								if (elem) {
+									elem.value = "";
+									hasFile = false;
+								}
+							}}
+						>
 							<Trash />
 							Entfernen
 						</Button>
