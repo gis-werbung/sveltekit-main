@@ -7,11 +7,14 @@
 	import type { PageProps } from "./$types";
 	import { slide } from "svelte/transition";
 	import { Button } from "$lib/components/ui/button";
+	import { formatBytes } from "bytes-formatter";
+	import { secondStringify } from "$lib/utils";
 
 	let { data }: PageProps = $props();
 
 	let isDragging = $state(false);
 	let files = $state<FileList>();
+	let value = $state();
 </script>
 
 <form>
@@ -88,7 +91,7 @@
 			<label
 				class="flex w-full cursor-pointer flex-col items-center gap-2 rounded border-2 border-dashed border-muted-foreground p-8 text-center transition-colors"
 				class:bg-muted={isDragging}
-				class:hidden={(files?.length ?? 0) > 0}
+				class:hidden={value}
 				ondragenter={() => (isDragging = true)}
 				ondragleave={() => (isDragging = false)}
 				ondrop={(e) => {
@@ -112,35 +115,59 @@
 				}}
 			>
 				<Upload class="size-16" strokeWidth="1" />
-				{#key isDragging}
-					<span transition:slide>
-						{#if isDragging}
-							Jetzt loslassen
-						{:else}
-							Datei hierher ziehen oder klicken
-						{/if}
-					</span>
-					<p class="text-sm">
-						Akzeptiert gängige Videoformat<br />Empfohlenes Seitenverhältnis: 16:9
-					</p>
-				{/key}
-				<input type="file" class="hidden" accept="video/*" bind:files required />
+				<div class="flex flex-col">
+					{#key isDragging}
+						<p transition:slide>
+							{#if isDragging}
+								Jetzt loslassen
+							{:else}
+								Datei hierher ziehen oder klicken
+							{/if}
+						</p>
+					{/key}
+				</div>
+				<p class="text-sm">
+					Akzeptiert gängige Videoformat<br />Empfohlenes Seitenverhältnis: 16:9
+				</p>
+				<input
+					type="file"
+					class="hidden"
+					accept="video/*"
+					autocomplete="off"
+					bind:files
+					bind:value
+					required
+				/>
 			</label>
 
-			{#if files && files.length > 0}
+			{#if files && value}
 				{const file = files[0]}
 				{const blob = new Blob([await file.arrayBuffer()], { type: file.type })}
 				{const url = URL.createObjectURL(blob)}
+				{let duration = $state(0)}
 				<Card.Root class="pt-0">
 					<!-- svelte-ignore a11y_media_has_caption -->
-					<video src={url} class="relative z-20 aspect-video w-full object-cover" controls={true}
+					<video
+						src={url}
+						class="object-cove /r relative z-20 aspect-video w-full"
+						controls={true}
+						bind:duration
 					></video>
 					<Card.Header>
 						<Card.Title>{file.name}</Card.Title>
-						<Card.Description>Ich bin schon sehr groß!</Card.Description>
+						<Card.Description>
+							{secondStringify(duration)} /
+							{formatBytes(file.size)}
+						</Card.Description>
 					</Card.Header>
 					<Card.Footer>
-						<Button variant="destructive" class="not-md:w-full">
+						<Button
+							variant="destructive"
+							class="not-md:w-full"
+							onclick={() => {
+								value = null;
+							}}
+						>
 							<Trash />
 							Entfernen
 						</Button>
