@@ -7,6 +7,7 @@
 	import {
 		Blocks,
 		ClipboardList,
+		ClockAlert,
 		FileExclamationPoint,
 		Image,
 		Info,
@@ -17,14 +18,11 @@
 		Videotape,
 		WholeWord
 	} from "@lucide/svelte";
-	import type { PageProps } from "./$types";
 	import { slide } from "svelte/transition";
 	import { Button } from "$lib/components/ui/button";
 	import { formatBytes } from "bytes-formatter";
 	import { Separator } from "$lib/components/ui/separator";
 	import { cn } from "$lib/utils";
-
-	let { data }: PageProps = $props();
 
 	function calculatePrice(isProfit: boolean, isVideo: boolean, isLong: boolean): number {
 		let price = 0;
@@ -43,13 +41,18 @@
 			elem.value = "";
 			hasFile = false;
 		}
+		isDragging = false;
+		uploadedWrongFile = false;
 	}
+
+	let name = $state("");
 
 	let isDragging = $state(false);
 	let files = $state<FileList>();
 	let hasFile = $state(false);
 	let uploadedWrongFile = $state(false);
 
+	let acceptedTerms = $state(false);
 	let isProfit = $state(false);
 	let isVideo = $state(false);
 	let isLong = $state(false);
@@ -57,6 +60,18 @@
 
 	let price = $derived(calculatePrice(isProfit, isVideo, isLong));
 	let mimeType = $derived(isVideo ? "video/" : "image/");
+
+	let displayPreview = $derived(hasFile && files?.[0]);
+	let file = $derived(files?.[0]);
+	let url = $derived(
+		file && URL.createObjectURL(new Blob([await file.arrayBuffer()], { type: file.type }))
+	);
+	let videoDuration = $state(0);
+
+	let videoRemainingDuration = $derived(Math.round(maxLength - videoDuration));
+	let isVideoTooLong = $derived(isVideo && displayPreview && videoRemainingDuration < 0);
+
+	let hasSubmitted = false;
 </script>
 
 <div>
@@ -101,7 +116,7 @@
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</label>
-			<Input name="title" required type="text" placeholder="Werbung für Bäume" />
+			<Input name="title" required type="text" placeholder="Werbung für Bäume" bind:value={name} />
 		</div>
 
 		<span>2.</span>
@@ -264,35 +279,83 @@
 				/>
 			</label>
 
-			{#if hasFile && files?.[0]}
-				{const file = files[0]}
-				{const blob = new Blob([await file.arrayBuffer()], { type: file.type })}
-				{const url = URL.createObjectURL(blob)}
-				{let duration = $state(0)}
-
+			{#if displayPreview}
 				<Card.Root class="pt-0">
 					{#if isVideo}
 						<!-- svelte-ignore a11y_media_has_caption -->
-						<video src={url} class="relative z-20 w-full object-cover" controls={true} bind:duration
+						<video
+							src={url}
+							class="relative z-20 w-full object-cover"
+							controls={true}
+							bind:duration={videoDuration}
 						></video>
 
 						<Card.Header>
-							<Card.Title>{file.name}</Card.Title>
+							<Card.Title>{file!.name}</Card.Title>
 							<Card.Description>
-								{Math.round(duration)} Sekunden /
-								{formatBytes(file.size)}
+								{Math.round(videoDuration)} Sekunden /
+								{formatBytes(file!.size)}
 							</Card.Description>
 						</Card.Header>
 					{:else}
 						<!-- svelte-ignore a11y_missing_attribute -->
 						<img src={url} class="relative z-20 w-full object-cover" />
 						<Card.Header>
-							<Card.Title>{file.name}</Card.Title>
+							<Card.Title>{file!.name}</Card.Title>
 							<Card.Description>
-								{formatBytes(file.size)}
+								{formatBytes(file!.size)}
 							</Card.Description>
 						</Card.Header>
 					{/if}
+
+					<Card.Content>
+						{#if isVideo && videoDuration > 0}
+							{#if videoRemainingDuration >= 2}
+								<Alert.Root>
+									<Info />
+									<Alert.Title
+										>Dein Video könnte {videoRemainingDuration} Sekunden länger sein</Alert.Title
+									>
+									<Alert.Description>
+										Dein Video darf {maxLength} Sekunden lang sein. Aktuell ist es {Math.round(
+											videoDuration
+										)} Sekunden lang.
+									</Alert.Description>
+								</Alert.Root>
+							{:else if isVideoTooLong}
+								{let upgradeCanSolve = $derived(!isLong && videoRemainingDuration >= -15)}
+								<Alert.Root variant="destructive">
+									<ClockAlert />
+									<Alert.Title
+										>Dein Video hat {Math.abs(videoRemainingDuration)} Sekunden Überlänge</Alert.Title
+									>
+									<Alert.Description>
+										Dein Video darf {maxLength} Sekunden lang sein. Aktuell ist es {Math.round(
+											videoDuration
+										)} Sekunden lang.
+										{#if upgradeCanSolve}
+											<br />
+											Hinweis: Wenn du den Aufpreis "Längere Werbung" buchen würdest, wäre dein Video
+											im Zeitrahmen
+										{/if}
+									</Alert.Description>
+									{#if upgradeCanSolve}
+										<Alert.Action>
+											<Button
+												onclick={() => {
+													isLong = true;
+												}}
+												variant="outline"
+											>
+												<Blocks />
+												Aufpreis buchen
+											</Button>
+										</Alert.Action>
+									{/if}
+								</Alert.Root>
+							{/if}
+						{/if}
+					</Card.Content>
 
 					<Card.Footer class="flex gap-2 not-md:flex-col">
 						<Button variant="destructive" class="not-md:w-full" onclick={deleteFiles}>
@@ -312,49 +375,6 @@
 						</Button>
 					</Card.Footer>
 				</Card.Root>
-
-				{#if isVideo && duration > 0}
-					{let remainingTime = $derived(Math.round(maxLength - duration))}
-					{#if remainingTime >= 2}
-						<Alert.Root>
-							<Info />
-							<Alert.Title>Dein Video könnte {remainingTime} Sekunden länger sein</Alert.Title>
-							<Alert.Description>
-								Dein Video darf {maxLength} Sekunden lang sein. Aktuell ist es {Math.round(
-									duration
-								)} Sekunden lang.
-							</Alert.Description>
-						</Alert.Root>
-					{:else if remainingTime < 0}
-						{let upgradeCanSolve = $derived(!isLong && remainingTime >= -15)}
-						<Alert.Root variant="destructive">
-							<FileExclamationPoint />
-							<Alert.Title>Dein Video hat {Math.abs(remainingTime)} Sekunden Überlänge</Alert.Title>
-							<Alert.Description>
-								Dein Video darf {maxLength} Sekunden lang sein. Aktuell ist es {Math.round(
-									duration
-								)} Sekunden lang.
-								{#if upgradeCanSolve}
-									<br />
-									Hinweis: Wenn du den Aufpreis "Längere Werbung" buchen würdest, wäre dein Video im Zeitrahmen
-								{/if}
-							</Alert.Description>
-							{#if upgradeCanSolve}
-								<Alert.Action>
-									<Button
-										onclick={() => {
-											isLong = true;
-										}}
-										variant="outline"
-									>
-										<Blocks />
-										Aufpreis buchen
-									</Button>
-								</Alert.Action>
-							{/if}
-						</Alert.Root>
-					{/if}
-				{/if}
 			{/if}
 		</div>
 	</div>
@@ -368,7 +388,7 @@
 	</p>
 
 	<label class="mt-8 mb-4 flex items-center gap-3">
-		<Checkbox required />
+		<Checkbox required bind:checked={acceptedTerms} />
 		<span>
 			Ich habe die
 			<a class="text-sidebar-primary hover:underline" href="/static/guidelines-ads">
@@ -378,13 +398,32 @@
 		</span>
 	</label>
 
-	<Button class="md:w-fit" type="submit">
+	<Button
+		class="md:w-fit"
+		type="submit"
+		disabled={!acceptedTerms || !displayPreview || isVideoTooLong || name === ""}
+	>
 		<SendHorizontal />
 		Zur Überprüfung einreichen
 	</Button>
 </form>
 
-<svelte:window ondrop={(e) => e.preventDefault()} ondragover={(e) => e.preventDefault()} />
+<svelte:window
+	ondrop={(e) => e.preventDefault()}
+	ondragover={(e) => e.preventDefault()}
+	onbeforeunload={(e) => {
+		if (hasSubmitted || (!name && !displayPreview)) {
+			return undefined;
+		}
+
+		// Nicht jeder Browser zeigt diese Meldung mehr an. Manche schon
+		const confirmationMessage =
+			"Deine Werbung wurde noch nicht eingereicht. Wenn du die Seite jetzt verlässt, werden deine Änderungen nicht gespeichert.";
+
+		(e || window.event).returnValue = confirmationMessage; // Gecko + IE
+		return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+	}}
+/>
 
 <style>
 	.mygrid {
