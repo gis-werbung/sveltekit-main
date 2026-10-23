@@ -74,7 +74,7 @@
 </header>
 
 <main class="p-4 lg:px-64 lg:pt-16">
-	<div class="flex items-end justify-between">
+	<div class="flex gap-3 not-lg:flex-col lg:items-end lg:justify-between">
 		<div>
 			<h1 aria-label="Titel" class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
 				{data.title}
@@ -83,15 +83,20 @@
 				{data.description}
 			</h2>
 
-			<h3 class="mt-3 flex items-center gap-1.5">
-				<UserRound strokeWidth="1.75" />
-				geschrieben von
-				<Avatar name={data.creator} id={data.creatorId} size={24} />
-				<span class="font-semibold">{data.creator}</span>
+			<h3 class="mt-3 flex gap-1.5 not-lg:flex-col lg:items-center">
+				<div class="flex items-center gap-1.5">
+					<UserRound strokeWidth="1.75" />
+					geschrieben von
+				</div>
+
+				<div class="flex items-center gap-1.5">
+					<Avatar name={data.creator} id={data.creatorId} size={24} />
+					<span class="font-semibold">{data.creator}</span>
+				</div>
 			</h3>
 		</div>
 
-		<p class="flex items-center gap-1.5 font-extralight">
+		<p class="flex items-center gap-1.5 font-extralight not-lg:flex-row-reverse not-lg:self-start">
 			zuletzt aktualisiert: {data.lastChanged}
 			<Clock strokeWidth="1" />
 		</p>
