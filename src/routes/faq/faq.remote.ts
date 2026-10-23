@@ -1,7 +1,8 @@
-import { form, getRequestEvent, query } from "$app/server";
+import { command, form, getRequestEvent, query } from "$app/server";
 import { isUserModerator } from "$lib/server/auth/users";
 import { db, faqEntries } from "$lib/server/db";
 import { error, redirect } from "@sveltejs/kit";
+import { eq } from "drizzle-orm";
 import * as v from "valibot";
 
 interface SearchResult {
@@ -67,3 +68,11 @@ export const createArticle = form(
 		redirect(303, "/app/moderator/faq-editor/" + article[0].id);
 	}
 );
+
+export const toggleVisibilty = command(v.boolean(), async (isPublic) => {
+	const { params } = getRequestEvent();
+	if (!params.artid) error(400);
+
+	const artId = Number(params.artid);
+	await db.update(faqEntries).set({ public: isPublic }).where(eq(faqEntries.id, artId));
+});

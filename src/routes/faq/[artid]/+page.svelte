@@ -9,6 +9,9 @@
 	import Avatar from "$lib/components/Avatar.svelte";
 	import { Clock, Pencil, UserRound } from "@lucide/svelte";
 	import { Button } from "$lib/components/ui/button";
+	import { Switch } from "$lib/components/ui/switch";
+	import { toggleVisibilty } from "../faq.remote";
+	import { toast } from "svelte-sonner";
 
 	let { data }: PageProps = $props();
 </script>
@@ -47,10 +50,26 @@
 	</div>
 
 	{#if data.canEdit}
-		<Button variant="outline" href="/app/moderator/faq-editor/{data.id}">
-			<Pencil />
-			Bearbeiten
-		</Button>
+		<div class="flex items-center gap-3">
+			<label class="flex items-center gap-2">
+				<Switch
+					checked={data.isPublic}
+					onCheckedChange={(checked) => {
+						toast.promise(toggleVisibilty(checked), {
+							loading: "Die Sichtbarkeit wird geändert...",
+							error: "Die Sichtbarkeit konnte nicht geändert werden. Probiere es später erneut",
+							success: "Der Artikel ist nun " + (checked ? "öffentlich" : "versteckt")
+						});
+					}}
+				/>
+				Öffentlich
+			</label>
+
+			<Button variant="outline" href="/app/moderator/faq-editor/{data.id}">
+				<Pencil />
+				Bearbeiten
+			</Button>
+		</div>
 	{/if}
 </header>
 

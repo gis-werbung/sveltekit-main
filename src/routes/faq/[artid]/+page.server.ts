@@ -25,6 +25,7 @@ export const load = (async ({ params, locals }) => {
 		content: article.content,
 		creator: article.creator.name,
 		creatorId: article.creator.id,
+		isPublic: article.public,
 		canEdit,
 		id
 	};
