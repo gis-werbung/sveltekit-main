@@ -17,7 +17,6 @@
 		Monitor,
 		HardDrive,
 		UserCog,
-		MessagesSquare,
 		Wrench,
 		Asterisk,
 		BanknoteArrowUp,
@@ -126,13 +125,6 @@
 					</Sidebar.MenuItem>
 
 					<Sidebar.MenuItem>
-						<Sidebar.MenuLink href="/app/moderator/faq-editor">
-							<MessagesSquare />
-							FAQ Editor
-						</Sidebar.MenuLink>
-					</Sidebar.MenuItem>
-
-					<Sidebar.MenuItem>
 						<Sidebar.MenuLink href="/app/moderator/audit">
 							<ClipboardClock />
 							Audit-Log
@@ -202,7 +194,7 @@
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
 				<Sidebar.MenuLink href="/app/user" class="group-data-[collapsible=icon]:p-1!">
-					<Avatar {user} />
+					<Avatar name={user.name} id={user.id} />
 
 					<div class="overflow-hidden text-ellipsis">
 						<span class="font-medium">{user.name}</span>

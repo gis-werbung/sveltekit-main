@@ -37,7 +37,7 @@
 		"@types/nodemailer": "^8.0.1",
 		"@types/useragent": "^2.3.4",
 		"argon2": "^0.45.1",
-		"bits-ui": "^2.19.0",
+		"bits-ui": "^2.20.2",
 		"bytes-formatter": "^21.6.16",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^1.0.0-rc.4",

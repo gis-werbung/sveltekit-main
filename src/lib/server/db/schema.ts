@@ -111,5 +111,7 @@ export const faqEntries = d.snakeCase.table("faq_entries", {
 
 	title: d.text().notNull(),
 	description: d.text(),
-	content: d.text().notNull()
+	content: d.text().notNull(),
+
+	public: d.boolean().notNull().default(false)
 });

@@ -5,6 +5,10 @@
 	import type { PageProps } from "./$types";
 	import { page } from "$app/state";
 	import Markdown from "$lib/components/Markdown.svelte";
+	import { Separator } from "$lib/components/ui/separator";
+	import Avatar from "$lib/components/Avatar.svelte";
+	import { Clock, Pencil, UserRound } from "@lucide/svelte";
+	import { Button } from "$lib/components/ui/button";
 
 	let { data }: PageProps = $props();
 </script>
@@ -41,8 +45,39 @@
 			</Breadcrumb.List>
 		</Breadcrumb.Root>
 	</div>
+
+	{#if data.canEdit}
+		<Button variant="outline" href="/app/moderator/faq-editor/{data.id}">
+			<Pencil />
+			Bearbeiten
+		</Button>
+	{/if}
 </header>
 
 <main class="p-4 lg:px-64 lg:pt-16">
+	<div class="flex items-end justify-between">
+		<div>
+			<h1 aria-label="Titel" class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+				{data.title}
+			</h1>
+			<h2 aria-label="Beschreibung" class="font-medium">
+				{data.description}
+			</h2>
+
+			<h3 class="mt-3 flex items-center gap-1.5">
+				<UserRound strokeWidth="1.75" />
+				geschrieben von
+				<Avatar name={data.creator} id={data.creatorId} size={24} />
+				<span class="font-semibold">{data.creator}</span>
+			</h3>
+		</div>
+
+		<p class="flex items-center gap-1.5 font-extralight">
+			zuletzt aktualisiert: {data.lastChanged}
+			<Clock strokeWidth="1" />
+		</p>
+	</div>
+
+	<Separator class="mt-6" />
 	<Markdown source={data.content} />
 </main>

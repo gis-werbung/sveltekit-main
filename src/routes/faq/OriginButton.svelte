@@ -1,11 +1,15 @@
 <script lang="ts" module>
 	interface OriginData {
 		name: string;
-		href: string;
+		href: () => string;
 	}
 
 	const originMap: Record<string, OriginData> = {
-		app: { href: "/app", name: "m Dashboard" }
+		app: { href: () => "/app", name: "m Dashboard" },
+		editor: {
+			href: () => "/app/moderator/faq-editor/" + Number(page.url.searchParams.get("art_id")),
+			name: "m Editor"
+		}
 	};
 </script>
 
@@ -23,7 +27,7 @@
 </script>
 
 {#if origin}
-	<Button title="Zurück zu{originData.name}" href={originData.href}>
+	<Button title="Zurück zu{originData.name}" href={originData.href()}>
 		<ArrowLeft />
 		<span class="not-lg:sr-only">Zurück zu{originData.name}</span>
 	</Button>

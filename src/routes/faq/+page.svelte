@@ -1,15 +1,28 @@
 <script lang="ts">
-	import { search } from "./search.remote";
-	import { Eye, Pencil, Search, SearchX } from "@lucide/svelte";
-	import { Button } from "$lib/components/ui/button";
-	import * as InputGroup from "$lib/components/ui/input-group";
 	import { page as pageState } from "$app/state";
+	import { createArticle, search } from "./faq.remote";
+	import {
+		Eye,
+		EyeOff,
+		Heading1,
+		Pencil,
+		Search,
+		SearchAlert,
+		SearchX,
+		TextAlignStart,
+		X
+	} from "@lucide/svelte";
+	import { Button, buttonVariants } from "$lib/components/ui/button";
+	import * as InputGroup from "$lib/components/ui/input-group";
 	import * as Card from "$lib/components/ui/card";
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb";
 	import * as Pagination from "$lib/components/ui/pagination";
-	import logo from "$lib/assets/logo_gross.svg";
-	import OriginButton from "./OriginButton.svelte";
+	import * as Dialog from "$lib/components/ui/dialog";
+	import * as Drawer from "$lib/components/ui/drawer";
 	import { Spinner } from "$lib/components/ui/spinner";
+	import OriginButton from "./OriginButton.svelte";
+	import logo from "$lib/assets/logo_gross.svg";
+	import { MediaQuery } from "svelte/reactivity";
 	import type { PageProps } from "./$types";
 
 	let { data }: PageProps = $props();
@@ -20,11 +33,70 @@
 
 	let searchTerm = $state("");
 	let lastSearchTerm = $state("");
+
+	let isCreateOpen = $state(false);
+	const large = new MediaQuery("min-width: 40rem");
+	const GenericDialog = $derived(large.current ? Dialog : Drawer);
 </script>
 
 <svelte:head>
 	<title>FAQ Bereich | GiS Werbung</title>
 </svelte:head>
+
+<GenericDialog.Root bind:open={isCreateOpen}>
+	<GenericDialog.Content class="sm:max-w-sm">
+		<form {...createArticle} class="mx-auto w-full max-w-md not-sm:px-4 not-sm:*:px-0! sm:contents">
+			<GenericDialog.Header>
+				<GenericDialog.Title>Neuen Artikel erstellen</GenericDialog.Title>
+				<GenericDialog.Description>
+					Erstelle einen neuen FAQ-Artikel. Standmäßig wird er noch unsichtbar bleiben
+				</GenericDialog.Description>
+			</GenericDialog.Header>
+
+			<div class="flex flex-col gap-3">
+				<InputGroup.Root>
+					<InputGroup.Addon>
+						<Heading1 />
+						Überschrift
+					</InputGroup.Addon>
+
+					<InputGroup.Input
+						{...createArticle.fields.title.as("text")}
+						placeholder="Wie man ein Bäumchen gießt"
+					/>
+				</InputGroup.Root>
+				<span class="text-destructive">{createArticle.fields.title.issues()?.[0].message}</span>
+
+				<InputGroup.Root>
+					<InputGroup.Addon>
+						<TextAlignStart />
+						Beschreibung
+					</InputGroup.Addon>
+
+					<InputGroup.Input
+						{...createArticle.fields.description.as("text")}
+						placeholder="(optional)"
+					/>
+				</InputGroup.Root>
+				<span class="text-destructive"
+					>{createArticle.fields.description.issues()?.[0].message}</span
+				>
+			</div>
+
+			<GenericDialog.Footer>
+				<GenericDialog.Close type="button" class={buttonVariants({ variant: "outline" })}>
+					<X />
+					Abbrechen
+				</GenericDialog.Close>
+
+				<Button type="submit">
+					<Pencil />
+					Erstellen
+				</Button>
+			</GenericDialog.Footer>
+		</form>
+	</GenericDialog.Content>
+</GenericDialog.Root>
 
 <header
 	class="sticky top-0 left-0 flex w-full justify-between gap-2 border-b bg-card p-4 not-md:flex-col md:px-16"
@@ -71,7 +143,17 @@
 			}}
 		>
 			<Search />
-			<span class="not-lg:sr-only">Suchen</span>
+			<span class="not-md:sr-only">Suchen</span>
+		</Button>
+
+		<Button
+			variant="outline"
+			onclick={() => {
+				isCreateOpen = true;
+			}}
+		>
+			<Pencil />
+			Neuer Artikel
 		</Button>
 	</div>
 </header>
@@ -93,10 +175,21 @@
 			</Button>
 		{/if}
 
+		{#if results.length === 0}
+			<SearchAlert size="96" strokeWidth="1" />
+			<p class="text-lg">Für deine Suchanfrage wurden keine Artikel gefunden</p>
+		{/if}
 		{#each results.slice(startIdx, startIdx + perPage) as result}
 			<Card.Root class="w-full">
 				<Card.Header>
-					<Card.Title>{result.title}</Card.Title>
+					<Card.Title class="flex items-center gap-2 text-lg">
+						{#if !result.public && data.canEdit}
+							<EyeOff title="versteckt" />
+						{:else if data.canEdit}
+							<Eye title="öffentlich" />
+						{/if}
+						{result.title}
+					</Card.Title>
 					{#if result.subtitle}
 						<Card.Description>{result.subtitle}</Card.Description>
 					{/if}
@@ -121,32 +214,34 @@
 			</Card.Root>
 		{/each}
 
-		<Pagination.Root bind:page count={results.length} {perPage} class="mt-4">
-			{#snippet children({ pages, currentPage })}
-				<Pagination.Content>
-					<Pagination.Item>
-						<Pagination.Previous />
-					</Pagination.Item>
+		{#if results.length > 0}
+			<Pagination.Root bind:page count={results.length} {perPage} class="mt-4">
+				{#snippet children({ pages, currentPage })}
+					<Pagination.Content>
+						<Pagination.Item>
+							<Pagination.Previous />
+						</Pagination.Item>
 
-					{#each pages as page (page.key)}
-						{#if page.type === "ellipsis"}
-							<Pagination.Item>
-								<Pagination.Ellipsis />
-							</Pagination.Item>
-						{:else}
-							<Pagination.Item>
-								<Pagination.Link {page} isActive={currentPage === page.value}>
-									{page.value}
-								</Pagination.Link>
-							</Pagination.Item>
-						{/if}
-					{/each}
+						{#each pages as page (page.key)}
+							{#if page.type === "ellipsis"}
+								<Pagination.Item>
+									<Pagination.Ellipsis />
+								</Pagination.Item>
+							{:else}
+								<Pagination.Item>
+									<Pagination.Link {page} isActive={currentPage === page.value}>
+										{page.value}
+									</Pagination.Link>
+								</Pagination.Item>
+							{/if}
+						{/each}
 
-					<Pagination.Item>
-						<Pagination.Next />
-					</Pagination.Item>
-				</Pagination.Content>
-			{/snippet}
-		</Pagination.Root>
+						<Pagination.Item>
+							<Pagination.Next />
+						</Pagination.Item>
+					</Pagination.Content>
+				{/snippet}
+			</Pagination.Root>
+		{/if}
 	{/await}
 </main>

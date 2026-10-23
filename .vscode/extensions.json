@@ -4,6 +4,7 @@
 		"esbenp.prettier-vscode",
 		"bradlc.vscode-tailwindcss",
 		"tobermory.es6-string-html",
-		"jgclark.vscode-todo-highlight"
+		"jgclark.vscode-todo-highlight",
+		"lakshmisankar.vscode-lucide-icons"
 	]
 }
