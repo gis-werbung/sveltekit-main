@@ -50,6 +50,24 @@
 	let textaera = $state<HTMLTextAreaElement>(null!);
 </script>
 
+{#snippet lastButtons()}
+	<InputGroup.Button
+		size="icon-sm"
+		onclick={() => genericWrap("[", "](https://example.com)")}
+		title="Verknüpfung"
+	>
+		<LinkIcon />
+	</InputGroup.Button>
+
+	<InputGroup.Button
+		size="icon-sm"
+		onclick={() => insert("![Bildbeschreibung](https://picsum.photos/200/300)")}
+		title="Bild"
+	>
+		<ImageIcon />
+	</InputGroup.Button>
+{/snippet}
+
 <InputGroup.Root>
 	<div class="flex w-full not-lg:flex-col lg:*:w-1/2">
 		<InputGroup.Textarea
@@ -131,32 +149,22 @@
 			<Heading4Icon />
 		</InputGroup.Button>
 
-		<Separator orientation="vertical" class="data-[orientation=vertical]:h-6" />
+		<Separator orientation="vertical" class="not-lg:hidden data-[orientation=vertical]:h-6" />
 
-		<InputGroup.Button
-			size="icon-sm"
-			onclick={() => genericWrap("[", "](https://example.com)")}
-			title="Verknüpfung"
-		>
-			<LinkIcon />
-		</InputGroup.Button>
+		<div class="contents not-lg:hidden">
+			{@render lastButtons()}
 
-		<InputGroup.Button
-			size="icon-sm"
-			onclick={() => insert("![Bildbeschreibung](https://picsum.photos/200/300)")}
-			title="Bild"
-		>
-			<ImageIcon />
-		</InputGroup.Button>
-
-		<div class="contents not-lg:hidden *:first:ms-auto">
-			{@render buttons?.()}
+			<div class="contents *:first:ms-auto">
+				{@render buttons?.()}
+			</div>
 		</div>
 	</InputGroup.Addon>
 
-	{#if buttons}
-		<InputGroup.Addon align="block-start" class="cursor-auto border-b lg:hidden">
-			{@render buttons()}
-		</InputGroup.Addon>
-	{/if}
+	<InputGroup.Addon align="block-start" class="cursor-auto border-b lg:hidden">
+		{@render lastButtons()}
+
+		<div class="contents *:first:ms-auto">
+			{@render buttons?.()}
+		</div>
+	</InputGroup.Addon>
 </InputGroup.Root>
