@@ -57,6 +57,7 @@
 		<Switch name="isPublic" checked={data.isPublic} />
 		Artikel öffentlich stellen
 	</label>
+	<span class="text-destructive">{edit.fields.title.issues()?.[0].message}</span>
 
 	<label class="mt-2 flex items-center gap-2 text-lg text-muted-foreground" for="description">
 		<TextAlignStartIcon />
@@ -69,6 +70,7 @@
 		placeholder="Hier erfährst du alles, was man wissen muss"
 		autocomplete="off"
 	/>
+	<span class="text-destructive">{edit.fields.description.issues()?.[0].message}</span>
 
 	<label class="mt-2 flex items-center gap-2 text-lg text-muted-foreground" for="description">
 		<NewspaperIcon />
@@ -93,6 +95,7 @@
 			</Button>
 		{/snippet}
 	</MarkdownEditor>
+	<span class="text-destructive">{edit.fields.content.issues()?.[0].message}</span>
 
 	{#if edit.fields.content.value()?.startsWith("# ")}
 		<Alert.Root variant="destructive">
@@ -103,4 +106,6 @@
 			</Alert.Description>
 		</Alert.Root>
 	{/if}
+
+	<span class="text-destructive">{edit.fields.issues()?.[0].message}</span>
 </form>
