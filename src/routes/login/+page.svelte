@@ -41,7 +41,8 @@
 
 				toast.promise(promise, {
 					success: "Eine E-Mail mit einem Zurücksetzungslink wurde gesendet",
-					error: "Die E-Mail konnte nicht gesendet werden. Probiere es später nochmal"
+					error: "Die E-Mail konnte nicht gesendet werden. Probiere es später nochmal",
+					loading: "Eine E-Mail wird an dich gesendet..."
 				});
 			})}
 			class="mx-auto w-full max-w-md not-sm:px-4 not-sm:*:px-0! sm:contents"
