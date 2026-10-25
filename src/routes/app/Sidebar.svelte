@@ -22,7 +22,8 @@
 		BanknoteArrowUp,
 		BanknoteX,
 		ClipboardClock,
-		Wallet
+		Wallet,
+		House
 	} from "@lucide/svelte";
 	import { toast } from "svelte-sonner";
 	import { goto } from "$app/navigation";
@@ -113,7 +114,7 @@
 
 		{#if isModerator}
 			<Sidebar.Group>
-				<Sidebar.GroupLabel class="text-amber-600 dark:text-amber-300">
+				<Sidebar.GroupLabel class="text-amber-600 dark:text-amber-400">
 					Moderator-Panel
 				</Sidebar.GroupLabel>
 				<Sidebar.Menu>
@@ -192,6 +193,8 @@
 
 	<Sidebar.Footer>
 		<Sidebar.Menu>
+			<Sidebar.Separator class="mb-2 group-data-[collapsible=icon]:hidden" />
+
 			<Sidebar.MenuItem>
 				<Sidebar.MenuLink href="/app/user" class="group-data-[collapsible=icon]:p-1!">
 					<Avatar name={user.name} id={user.id} />
@@ -241,6 +244,13 @@
 					<LogOut />
 					Abmelden
 				</Sidebar.MenuButton>
+			</Sidebar.MenuItem>
+
+			<Sidebar.MenuItem>
+				<Sidebar.MenuLink href="/" active={false}>
+					<House />
+					Zur Startseite
+				</Sidebar.MenuLink>
 			</Sidebar.MenuItem>
 		</Sidebar.Menu>
 	</Sidebar.Footer>

@@ -5,6 +5,7 @@
 		Eye,
 		EyeOff,
 		Heading1,
+		House,
 		Pencil,
 		Search,
 		SearchAlert,
@@ -99,7 +100,7 @@
 </GenericDialog.Root>
 
 <header
-	class="sticky top-0 left-0 flex w-full justify-between gap-2 border-b bg-card p-4 not-md:flex-col md:px-16"
+	class="sticky top-0 left-0 flex w-full justify-between gap-4 border-b bg-card p-4 not-md:flex-col md:px-16"
 >
 	<div class="flex items-center gap-3">
 		<OriginButton />
@@ -107,9 +108,12 @@
 		<img src={logo} alt="GiS Werbung Logo" class="h-8 self-start" />
 
 		<Breadcrumb.Root>
-			<Breadcrumb.List class="text-xl">
+			<Breadcrumb.List>
 				<Breadcrumb.Item>
-					<Breadcrumb.Link href="/">GiS Werbung</Breadcrumb.Link>
+					<Breadcrumb.Link href="/" class="flex items-center gap-2" title="Zur Startseite">
+						<House size="16" />
+						<span class="not-md:hidden">GiS Werbung</span>
+					</Breadcrumb.Link>
 				</Breadcrumb.Item>
 
 				<Breadcrumb.Separator />
@@ -146,15 +150,15 @@
 			<span class="not-md:sr-only">Suchen</span>
 		</Button>
 
-		<Button
-			variant="outline"
-			onclick={() => {
-				isCreateOpen = true;
-			}}
-		>
-			<Pencil />
-			Neuer Artikel
-		</Button>
+			<Button
+				variant="outline"
+				onclick={() => {
+					isCreateOpen = true;
+				}}
+			>
+				<Pencil />
+				Neuer Artikel
+			</Button>
 	</div>
 </header>
 

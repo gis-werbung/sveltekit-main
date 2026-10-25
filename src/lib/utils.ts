@@ -29,6 +29,12 @@ export function secondStringify(seconds: number): string {
 	return rstring;
 }
 
+export function cutTextOffAfter(text: string, cutIndex: number) {
+	if (text.length <= cutIndex) return text;
+
+	return text.slice(0, cutIndex) + "…";
+}
+
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }

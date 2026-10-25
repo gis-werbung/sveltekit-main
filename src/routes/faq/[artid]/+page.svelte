@@ -7,7 +7,7 @@
 	import Markdown from "$lib/components/Markdown.svelte";
 	import { Separator } from "$lib/components/ui/separator";
 	import Avatar from "$lib/components/Avatar.svelte";
-	import { Clock, Pencil, UserRound } from "@lucide/svelte";
+	import { Clock, House, Pencil, UserRound } from "@lucide/svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { Switch } from "$lib/components/ui/switch";
 	import { toggleVisibilty } from "../faq.remote";
@@ -21,7 +21,7 @@
 </svelte:head>
 
 <header
-	class="sticky top-0 left-0 flex w-full justify-between gap-2 border-b bg-card p-4 not-md:flex-col md:px-16"
+	class="sticky top-0 left-0 flex w-full justify-between gap-4 border-b bg-card p-4 not-md:flex-col md:px-16"
 >
 	<div class="flex items-center gap-3">
 		<OriginButton />
@@ -29,9 +29,12 @@
 		<img src={logo} alt="GiS Werbung Logo" class="h-8 self-start" />
 
 		<Breadcrumb.Root>
-			<Breadcrumb.List class="text-xl">
+			<Breadcrumb.List>
 				<Breadcrumb.Item>
-					<Breadcrumb.Link href="/">GiS Werbung</Breadcrumb.Link>
+					<Breadcrumb.Link href="/" class="flex items-center gap-2" title="Zur Startseite">
+						<House size="16" />
+						<span class="not-md:hidden">GiS Werbung</span>
+					</Breadcrumb.Link>
 				</Breadcrumb.Item>
 
 				<Breadcrumb.Separator />
@@ -50,7 +53,7 @@
 	</div>
 
 	{#if data.canEdit}
-		<div class="flex items-center gap-3">
+		<div class="flex items-center gap-3 self-end">
 			<label class="flex items-center gap-2">
 				<Switch
 					checked={data.isPublic}

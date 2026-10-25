@@ -13,7 +13,7 @@
 		const promise = logOutAll();
 
 		toast.promise(promise, {
-			loading: "Alle anderen Sitzungen werden abgemeldet",
+			loading: "Alle anderen Sitzungen werden abgemeldet...",
 			success: "Alle anderen Sitzungen wurden abgemeldet",
 			error: "Die Sitzungen konnten nicht abgemedet werden. Probiere es später nochmal"
 		});

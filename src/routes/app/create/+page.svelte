@@ -23,6 +23,7 @@
 	import { formatBytes } from "bytes-formatter";
 	import { Separator } from "$lib/components/ui/separator";
 	import { cn } from "$lib/utils";
+	import { addToPath } from "../path";
 
 	function calculatePrice(isProfit: boolean, isVideo: boolean, isLong: boolean): number {
 		let price = 0;
@@ -72,7 +73,13 @@
 	let isVideoTooLong = $derived(isVideo && displayPreview && videoRemainingDuration < 0);
 
 	let hasSubmitted = false;
+
+	addToPath({ title: "Werbung bestellen" });
 </script>
+
+<svelte:head>
+	<title>Werbung bestellen | GiS Werbung</title>
+</svelte:head>
 
 <div>
 	<p class="text-xl">Schön, dass du bei uns Werbung bestellen möchtest!</p>

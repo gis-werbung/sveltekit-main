@@ -2,11 +2,19 @@
 	import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import { Separator } from "$lib/components/ui/separator";
+	import { clearPath, pagePath } from "$routes/app/path";
 	import AppSidebar from "./Sidebar.svelte";
 	import logo from "$lib/assets/logo_gross.svg";
 	import type { LayoutProps } from "./$types";
+	import { onNavigate } from "$app/navigation";
+	import { TowerControl } from "@lucide/svelte";
+	import { page } from "$app/state";
 
 	const { data, children }: LayoutProps = $props();
+
+	onNavigate(() => {
+		clearPath();
+	});
 </script>
 
 <Sidebar.Provider>
@@ -22,14 +30,38 @@
 				<img src={logo} alt="GiS Werbung Logo" class="h-8 self-start" />
 
 				<Breadcrumb.Root>
-					<Breadcrumb.List class="text-xl">
-						<Breadcrumb.Item class="hidden md:block">
-							<Breadcrumb.Link href="/app">GiS Werbung</Breadcrumb.Link>
-						</Breadcrumb.Item>
-						<Breadcrumb.Separator class="hidden md:block" />
-						<Breadcrumb.Item>
-							<Breadcrumb.Page>Hier könnte ihr Titel stehen</Breadcrumb.Page>
-						</Breadcrumb.Item>
+					<Breadcrumb.List>
+						{#if page.route.id === "/app"}
+							<Breadcrumb.Item>
+								<Breadcrumb.Page class="flex items-center gap-2">
+									<TowerControl size="16" />
+									Dashboard
+								</Breadcrumb.Page>
+							</Breadcrumb.Item>
+						{:else}
+							<Breadcrumb.Item>
+								<Breadcrumb.Link href="/app" class="flex items-center gap-2" title="Zum Dashboard">
+									<TowerControl size="16" />
+									<span class="not-md:hidden">Dashboard</span>
+								</Breadcrumb.Link>
+							</Breadcrumb.Item>
+							<Breadcrumb.Separator />
+
+							{#each $pagePath as pathEntry, index}
+								{let isLast = $derived(index === $pagePath.length - 1)}
+								<Breadcrumb.Item>
+									{#if isLast}
+										<Breadcrumb.Page>{pathEntry.title}</Breadcrumb.Page>
+									{:else}
+										<Breadcrumb.Link href={pathEntry.href}>{pathEntry.title}</Breadcrumb.Link>
+									{/if}
+								</Breadcrumb.Item>
+
+								{#if !isLast}
+									<Breadcrumb.Separator />
+								{/if}
+							{/each}
+						{/if}
 					</Breadcrumb.List>
 				</Breadcrumb.Root>
 			</div>
