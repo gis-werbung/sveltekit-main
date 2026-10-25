@@ -68,7 +68,7 @@
 	</InputGroup.Button>
 {/snippet}
 
-<InputGroup.Root>
+<InputGroup.Root class="ignore-disabled">
 	<div class="flex w-full not-lg:flex-col lg:*:w-1/2">
 		<InputGroup.Textarea
 			bind:value={source}
@@ -78,7 +78,7 @@
 			autocomplete="off"
 		/>
 		<div class="bg-muted not-lg:border-t lg:border-l">
-			<p class="flex items-center gap-1 p-4 pb-0 text-muted-foreground">
+			<p class="flex items-center gap-2 p-4 pb-0 text-muted-foreground">
 				<EyeIcon />
 				Vorschau
 			</p>

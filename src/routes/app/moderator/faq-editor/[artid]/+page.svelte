@@ -5,30 +5,76 @@
 	import {
 		Heading1Icon,
 		NewspaperIcon,
+		Pencil,
 		SaveIcon,
 		SquareArrowOutUpRight,
 		TextAlignStartIcon,
-		TriangleAlert
+		TriangleAlert,
+		UndoIcon
 	} from "@lucide/svelte";
-	import { edit } from "./editor.remote";
 	import { Textarea } from "$lib/components/ui/textarea";
+	import { InputGroupButton } from "$lib/components/ui/input-group";
 	import { Input } from "$lib/components/ui/input";
-	import { toast } from "svelte-sonner";
-	import { Button } from "$lib/components/ui/button";
-	import type { PageProps } from "./$types";
 	import { Switch } from "$lib/components/ui/switch";
+	import { edit } from "./editor.remote";
+	import { toast } from "svelte-sonner";
+	import { goto } from "$app/navigation";
+	import { addToPath, replaceTitle } from "$routes/app/path";
+	import type { PageProps } from "./$types";
+	import { MediaQuery } from "svelte/reactivity";
+	import { cutTextOffAfter } from "$lib/utils";
 
 	let { data }: PageProps = $props();
 
-	edit.fields.title.set(data.title);
-	if (data.description) edit.fields.description.set(data.description);
-	edit.fields.content.set(data.content);
-	edit.fields.isPublic.set(data.isPublic);
+	const large = new MediaQuery("min-width: 40rem");
+
+	let lastTitle = $state(data.title);
+	let lastDescription = $state(data.description);
+	let lastContent = $state(data.content);
+	let lastIsPublic = $state(data.isPublic);
+
+	let isPublic = $state(data.isPublic);
+
+	let titleUnchanged = $derived(lastTitle === edit.fields.title.value());
+	let descriptionUnchanged = $derived(lastDescription === edit.fields.description.value());
+	let contentUnchanged = $derived(lastContent === edit.fields.content.value());
+	let isPublicUnchanged = $derived(lastIsPublic === isPublic);
+
+	let dataUnchanged = $derived(
+		titleUnchanged && descriptionUnchanged && contentUnchanged && isPublicUnchanged
+	);
+
+	function reset() {
+		edit.fields.title.set(lastTitle);
+		if (lastDescription) edit.fields.description.set(lastDescription);
+		edit.fields.content.set(lastContent);
+		edit.fields.isPublic.set(lastIsPublic);
+	}
+
+	addToPath({ title: "FAQ-Editor", href: "/faq?origin=app" });
+	addToPath({ title: data.title });
+
+	reset();
+
+	$effect(() => {
+		const title = edit.fields.title.value() || "<unbenannt>";
+		replaceTitle(large.current ? title : cutTextOffAfter(title, 24));
+	});
 </script>
 
 <svelte:head>
 	<title>Bearbeiten: {edit.fields.title.value()} | FAQ Bereich | GiS Werbung</title>
 </svelte:head>
+
+{#snippet changedMarker(isUnchanged: boolean)}
+	<span
+		class="flex items-center gap-1 text-sm text-amber-600 italic dark:text-amber-400"
+		class:hidden={isUnchanged}
+	>
+		(<Pencil size="12" />
+		geändert)
+	</span>
+{/snippet}
 
 <form
 	class="contents"
@@ -39,11 +85,19 @@
 			error: "Die Änderungen konnten nicht gespeichert werden. Probiere es später nochmal",
 			success: "Die Änderungen wurden gespeichert"
 		});
+
+		promise.then(() => {
+			lastTitle = data.title;
+			lastDescription = data.description;
+			lastContent = data.content;
+			lastIsPublic = data.isPublic;
+		});
 	})}
 >
 	<label class="flex items-center gap-2 text-lg text-muted-foreground" for="title">
 		<Heading1Icon />
 		Überschrift
+		{@render changedMarker(titleUnchanged)}
 	</label>
 
 	<Input
@@ -54,14 +108,16 @@
 	/>
 
 	<label class="flex items-center gap-2">
-		<Switch name="isPublic" checked={data.isPublic} />
+		<Switch name="isPublic" bind:checked={isPublic} />
 		Artikel öffentlich stellen
+		{@render changedMarker(isPublicUnchanged)}
 	</label>
 	<span class="text-destructive">{edit.fields.title.issues()?.[0].message}</span>
 
 	<label class="mt-2 flex items-center gap-2 text-lg text-muted-foreground" for="description">
 		<TextAlignStartIcon />
 		Beschreibung
+		{@render changedMarker(descriptionUnchanged)}
 	</label>
 
 	<Textarea
@@ -75,24 +131,53 @@
 	<label class="mt-2 flex items-center gap-2 text-lg text-muted-foreground" for="description">
 		<NewspaperIcon />
 		Artikelinhalt
+		{@render changedMarker(contentUnchanged)}
 	</label>
 
 	<MarkdownEditor {...edit.fields.content.as("text")} defaultContent={data.content}>
 		{#snippet buttons()}
-			<Button size="sm" type="submit">
+			<InputGroupButton
+				size="sm"
+				variant="default"
+				type="submit"
+				disabled={dataUnchanged}
+				title="Speichern"
+			>
 				<SaveIcon />
 				Speichern
-			</Button>
+			</InputGroupButton>
 
-			<Button
-				size="sm"
+			<InputGroupButton
+				size={large.current ? "sm" : "icon-sm"}
 				class="text-foreground"
 				variant="outline"
-				href="/faq/{data.id}?origin=editor&art_id={data.id}"
+				title="Artikel öffnen"
+				onclick={() => {
+					if (
+						dataUnchanged ||
+						confirm(
+							"Deine Änderungen werden hierbei nicht gespeichert. Möchtest du den Artikel trotzdem öffnen?"
+						)
+					) {
+						goto(`/faq/${data.id}?origin=editor&art_id=${data.id}`);
+					}
+				}}
 			>
 				<SquareArrowOutUpRight />
-				Öffnen
-			</Button>
+				<span class="not-lg:hidden">Öffnen</span>
+			</InputGroupButton>
+
+			<InputGroupButton
+				size={large.current ? "sm" : "icon-sm"}
+				class="text-destructive"
+				variant="outline"
+				title="Änderungen zurücksetzen"
+				disabled={dataUnchanged}
+				onclick={reset}
+			>
+				<UndoIcon />
+				<span class="not-lg:hidden">Zurücksetzen</span>
+			</InputGroupButton>
 		{/snippet}
 	</MarkdownEditor>
 	<span class="text-destructive">{edit.fields.content.issues()?.[0].message}</span>
@@ -109,3 +194,20 @@
 
 	<span class="text-destructive">{edit.fields.issues()?.[0].message}</span>
 </form>
+
+<svelte:window
+	ondrop={(e) => e.preventDefault()}
+	ondragover={(e) => e.preventDefault()}
+	onbeforeunload={(e) => {
+		if (dataUnchanged) {
+			return undefined;
+		}
+
+		// Nicht jeder Browser zeigt diese Meldung mehr an. Manche schon
+		const confirmationMessage =
+			"Deine Änderungen wurden noch nicht gespeichert. Wenn du die Seite jetzt verlässt, werden deine Änderungen nicht gespeichert.";
+
+		(e || window.event).returnValue = confirmationMessage; // Gecko + IE
+		return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+	}}
+/>
