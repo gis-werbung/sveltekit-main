@@ -77,16 +77,16 @@
 </header>
 
 <main class="p-4 lg:px-64 lg:pt-16">
-	<div class="flex gap-3 not-lg:flex-col lg:items-end lg:justify-between">
+	<div class="flex gap-3 not-xl:flex-col xl:items-end xl:justify-between">
 		<div>
-			<h1 aria-label="Titel" class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+			<h1 aria-label="Titel" class="scroll-m-20 text-4xl font-extrabold tracking-tight xl:text-5xl">
 				{data.title}
 			</h1>
 			<h2 aria-label="Beschreibung" class="font-medium">
 				{data.description}
 			</h2>
 
-			<h3 class="mt-3 flex gap-1.5 not-lg:flex-col lg:items-center">
+			<h3 class="mt-3 flex gap-1.5 not-xl:flex-col xl:items-center">
 				<div class="flex items-center gap-1.5">
 					<UserRound strokeWidth="1.75" />
 					geschrieben von
@@ -99,7 +99,9 @@
 			</h3>
 		</div>
 
-		<p class="flex items-center gap-1.5 font-extralight not-lg:flex-row-reverse not-lg:self-start">
+		<p
+			class="flex items-center gap-1.5 font-extralight text-nowrap not-xl:flex-row-reverse not-xl:self-start"
+		>
 			zuletzt aktualisiert: {data.lastChanged}
 			<Clock strokeWidth="1" />
 		</p>

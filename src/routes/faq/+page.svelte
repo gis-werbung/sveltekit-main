@@ -150,6 +150,7 @@
 			<span class="not-md:sr-only">Suchen</span>
 		</Button>
 
+		{#if data.canEdit}
 			<Button
 				variant="outline"
 				onclick={() => {
@@ -159,6 +160,7 @@
 				<Pencil />
 				Neuer Artikel
 			</Button>
+		{/if}
 	</div>
 </header>
 
