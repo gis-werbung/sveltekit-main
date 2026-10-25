@@ -3,7 +3,7 @@
 	import favicon from "$lib/assets/favicon.svg";
 	import { ModeWatcher, mode, setMode, resetMode } from "mode-watcher";
 	import { Toaster } from "$lib/components/ui/sonner";
-	import { Sun, Moon, MonitorCog, GlobeX, RefreshCw } from "@lucide/svelte";
+	import { Sun, Moon, MonitorCog, GlobeX, RefreshCw, ArrowLeft, ArrowRight } from "@lucide/svelte";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import { cn } from "$lib/utils";
@@ -11,6 +11,8 @@
 	import { Button } from "$lib/components/ui/button";
 
 	let { children } = $props();
+
+	let themeMoveRight = $state(true);
 </script>
 
 <!-- The thing for the notifications -->
@@ -24,11 +26,12 @@
 <!-- Favicon -->
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<!-- Bottom left theme menu -->
+<!-- Bottom left/right theme menu -->
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
 		class={cn(
-			"fixed right-2 bottom-2",
+			"fixed bottom-2 z-50",
+			themeMoveRight ? "right-2" : "left-2",
 			buttonVariants({
 				variant: mode.current === "light" ? "default" : "secondary",
 				size: "icon-lg"
@@ -54,6 +57,22 @@
 		<DropdownMenu.Item onclick={() => resetMode()}>
 			<MonitorCog />
 			System
+		</DropdownMenu.Item>
+
+		<DropdownMenu.Separator />
+
+		<DropdownMenu.Item
+			onclick={() => {
+				themeMoveRight = !themeMoveRight;
+			}}
+		>
+			{#if themeMoveRight}
+				<ArrowLeft />
+				Knopf nach links
+			{:else}
+				<ArrowRight />
+				Knopf nach rechts
+			{/if}
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
