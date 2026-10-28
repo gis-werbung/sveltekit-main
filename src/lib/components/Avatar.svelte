@@ -1,8 +1,15 @@
 <script lang="ts">
 	import { Style, Avatar } from "@dicebear/core";
 	import definition from "@dicebear/styles/planets.json" with { type: "json" };
+	import { cn } from "$lib/utils";
+	import type { ClassValue } from "clsx";
 
-	let { name, id, size = 40 }: { name: string; id: number; size?: number } = $props();
+	let {
+		name,
+		id,
+		size = 40,
+		class: className
+	}: { name: string; id: number; size?: number; class?: ClassValue } = $props();
 
 	const style = new Style(definition);
 	const avatar = $derived(
@@ -26,4 +33,4 @@
 	);
 </script>
 
-<img src={avatar} alt="{name}'s avatar" class="shrink-0 rounded-md" />
+<img src={avatar} alt="{name}'s avatar" class={cn("shrink-0 rounded-md", className)} />

@@ -231,14 +231,15 @@
 
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton
-					onclick={async () => {
-						try {
-							await logout();
+					onclick={() => {
+						const promise = logout();
+						toast.promise(promise, {
+							loading: "Du wirst abgemeldet",
+							error: "Beim Abmelden ist etwas schief gelaufen"
+						});
+						promise.then(() => {
 							goto("/");
-							toast.success("Auf Wiedersehen!");
-						} catch {
-							toast.error("Leider konntest du nicht abgemeldet werden");
-						}
+						});
 					}}
 				>
 					<LogOut />
