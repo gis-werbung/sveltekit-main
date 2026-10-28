@@ -25,3 +25,6 @@ vite.config.ts.timestamp-*
 
 # Drizzle
 /drizzle
+
+# Dev Logs
+/dev-logs

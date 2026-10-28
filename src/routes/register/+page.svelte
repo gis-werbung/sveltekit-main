@@ -107,7 +107,7 @@
 				<span class="text-destructive">{register.fields._repeatPassword.issues()?.[0].message}</span
 				>
 			</Card.Content>
-			<Card.Footer class="flex-col gap-2">
+			<Card.Footer class="flex flex-col gap-2">
 				<Button type="submit" class="w-full">
 					<UserRoundPlus />
 					Konto erstellen

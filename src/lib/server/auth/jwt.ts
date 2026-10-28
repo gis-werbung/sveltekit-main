@@ -3,7 +3,6 @@ import { jwtVerify, SignJWT } from "jose";
 import { db } from "$lib/server/db";
 import * as v from "valibot";
 import { FULL_ISO_DATE_REGEX } from "$lib/utils";
-import type { Cookies } from "@sveltejs/kit";
 import { dev } from "$app/env";
 import { getRequestEvent } from "$app/server";
 
@@ -79,8 +78,7 @@ export async function validateJWT(
 		if (data.tokenType !== expectedTokenType) return null;
 
 		const user = await db.query.users.findFirst({
-			where: { id: data.userId },
-			columns: { passwordHash: false }
+			where: { id: data.userId }
 		});
 		if (user?.updatedAt.toISOString() !== data.lastChanged) return null;
 

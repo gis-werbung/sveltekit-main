@@ -5,8 +5,6 @@ import { createUser } from "$lib/server/auth/users";
 import { DBConflictError, handleDbError } from "$lib/server/db/errorHandling";
 import { invalid, redirect } from "@sveltejs/kit";
 import * as v from "valibot";
-import { auditLog, db } from "$lib/server/db";
-import { getIdentBundle, getIdentText } from "$lib/server/identification";
 import { insertAudit } from "$lib/server/audit";
 
 export const register = form(
@@ -55,7 +53,7 @@ export const register = form(
 			if (dbError instanceof DBConflictError) {
 				switch (dbError.conflict) {
 					case "email":
-						return invalid(issue.email("Die E-Mail wird bereits verwendet"));
+						return invalid(issue.email("Ein Konto mit der selben E-Mail existiert bereits"));
 					case "name":
 						return invalid(issue.name("Ein Konto mit dem selben Namen existiert bereits"));
 				}

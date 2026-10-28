@@ -36,7 +36,7 @@ export const users = d.snakeCase.table("users", {
 	name: d.text().notNull().unique(),
 	passwordHash: d.char({ length: 97 }).notNull(),
 	status: accountStatusEnum().default("user").notNull(),
-	balance: d.integer().default(0),
+	balance: d.integer().default(0).notNull(),
 
 	createdAt: d.timestamp().defaultNow().notNull(),
 	updatedAt: d.timestamp().defaultNow().notNull()
@@ -101,4 +101,17 @@ export const auditLog = d.snakeCase.table("audit_log", {
 	targetUserId: d.integer(),
 	description: d.text(),
 	whatHappend: whatHappendEnum().notNull()
+});
+
+export const faqEntries = d.snakeCase.table("faq_entries", {
+	createdAt: d.timestamp().notNull().defaultNow(),
+	changedAt: d.timestamp().notNull().defaultNow(),
+	id: d.serial().notNull(),
+	creatorUserId: d.integer().notNull(),
+
+	title: d.text().notNull(),
+	description: d.text(),
+	content: d.text().notNull(),
+
+	public: d.boolean().notNull().default(false)
 });

@@ -15,6 +15,7 @@
 	import { replaceState } from "$app/navigation";
 	import type { PageProps } from "./$types";
 	import { isHttpError } from "@sveltejs/kit";
+	import { page } from "$app/state";
 
 	async function resend() {
 		const result = resendEmailCode();
@@ -39,19 +40,18 @@
 		countdown.stopCountdown();
 	});
 
-	onMount(async () => {
-		const urlParams = new URLSearchParams(window.location.search);
-		if (urlParams.size === 0) return;
-
-		if (urlParams.has("errored")) {
+	if (page.url.searchParams.size > 0) {
+		if (page.url.searchParams.has("errored")) {
 			toast.error(
 				"Deine E-Mail konnte bei der Registration leider nicht gesendet werden. Probiere es später nochmal"
 			);
 		}
 
-		await tick();
-		replaceState(window.location.pathname, {});
-	});
+		onMount(async () => {
+			await tick();
+			replaceState(page.url.pathname, {});
+		});
+	}
 </script>
 
 <svelte:head>

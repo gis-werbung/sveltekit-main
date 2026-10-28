@@ -5,5 +5,20 @@
 	},
 	"material-icon-theme.files.associations": {
 		"*.html.txt": "html",
-	}
+	},
+	"todohighlight.include": [
+		"**/*.js",
+		"**/*.jsx",
+		"**/*.ts",
+		"**/*.tsx",
+		"**/*.html",
+		"**/*.css",
+		"**/*.scss",
+		"**/*.php",
+		"**/*.rb",
+		"**/*.txt",
+		"**/*.mdown",
+		"**/*.md",
+		"**/*.svelte"
+	]
 }

@@ -1,6 +1,11 @@
-import type { Handle } from "@sveltejs/kit";
+import type { Handle, ServerInit } from "@sveltejs/kit";
 import { validateJWT } from "$lib/server/auth/jwt";
 import { isUserBanned } from "$lib/server/auth/users";
+import { configureLogger } from "$lib/logger";
+import { getLogger } from "@logtape/logtape";
+import { dev } from "$app/env";
+
+const logger = getLogger(["gis-werbung", "hooks"]);
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Auth
@@ -18,4 +23,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	return await resolve(event);
+};
+
+export const init: ServerInit = async () => {
+	await configureLogger();
+	logger.info("Server has restarted");
+	if (dev) logger.info("Server is running in dev mode");
 };

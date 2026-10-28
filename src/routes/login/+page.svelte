@@ -7,7 +7,7 @@
 		Eye,
 		UserRoundKey,
 		UserRoundPlus,
-		BadgeQuestionMark,
+		CircleQuestionMark,
 		X,
 		SendHorizontal
 	} from "@lucide/svelte";
@@ -41,7 +41,8 @@
 
 				toast.promise(promise, {
 					success: "Eine E-Mail mit einem Zurücksetzungslink wurde gesendet",
-					error: "Die E-Mail konnte nicht gesendet werden. Probiere es später nochmal"
+					error: "Die E-Mail konnte nicht gesendet werden. Probiere es später nochmal",
+					loading: "Eine E-Mail wird an dich gesendet..."
 				});
 			})}
 			class="mx-auto w-full max-w-md not-sm:px-4 not-sm:*:px-0! sm:contents"
@@ -142,7 +143,7 @@
 				</InputGroup.Root>
 				<span class="text-destructive">{login.fields._password.issues()?.[0].message}</span>
 			</Card.Content>
-			<Card.Footer class="flex-col gap-2">
+			<Card.Footer class="flex flex-col gap-2">
 				<Button type="submit" class="w-full">
 					<UserRoundKey />
 					Anmelden
@@ -155,7 +156,7 @@
 					</Button>
 
 					<Button variant="outline" onclick={() => (isForgotOpen = true)}>
-						<BadgeQuestionMark />
+						<CircleQuestionMark />
 						Passwort vergessen
 					</Button>
 				</div>

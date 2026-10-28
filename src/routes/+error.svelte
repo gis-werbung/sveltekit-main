@@ -2,11 +2,11 @@
 	import { page } from "$app/state";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button";
-	import { CircleQuestionMark, House } from "@lucide/svelte";
+	import { ArrowLeft, CircleQuestionMark, House } from "@lucide/svelte";
 </script>
 
 <svelte:head>
-	<title>{page.status} | Gis Werbung</title>
+	<title>{page.status} | GiS Werbung</title>
 </svelte:head>
 
 <div class="absolute top-1/2 left-1/2 w-md -translate-1/2 not-sm:w-full">
@@ -20,8 +20,13 @@
 				</div>
 			</div>
 		</Card.Header>
-		<Card.Footer>
-			<Button class="w-full" href="/">
+		<Card.Footer class="flex flex-col gap-2">
+			<Button class="w-full" onclick={() => navigation.back()}>
+				<ArrowLeft />
+				Zurück
+			</Button>
+
+			<Button class="w-full" href="/" variant="outline">
 				<House />
 				Zur Startseite
 			</Button>

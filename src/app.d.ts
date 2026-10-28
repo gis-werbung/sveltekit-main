@@ -14,7 +14,7 @@ declare global {
 	}
 
 	namespace DBTypes {
-		type OpenUser = Omit<typeof users.$inferSelect, "passwordHash">;
+		type OpenUser = typeof users.$inferSelect;
 	}
 }
 

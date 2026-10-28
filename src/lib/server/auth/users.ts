@@ -13,22 +13,7 @@ export async function createUser({
 }) {
 	const passwordHash = await hash(password);
 
-	const result = await db
-		.insert(users)
-		.values({ email, name, passwordHash })
-		.onConflictDoUpdate({
-			target: users.email,
-			targetWhere: eq(users.status, "deleted"),
-			set: {
-				status: "user",
-				email,
-				name,
-				passwordHash,
-				updatedAt: sql`NOW()`,
-				createdAt: sql`NOW()`
-			}
-		})
-		.returning();
+	const result = await db.insert(users).values({ email, name, passwordHash }).returning();
 	return result[0];
 }
 
