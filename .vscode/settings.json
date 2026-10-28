@@ -1,5 +1,9 @@
 {
 	"files.associations": {
-		"*.css": "tailwindcss"
+		"*.css": "tailwindcss",
+		"*.html.txt": "html"
+	},
+	"material-icon-theme.files.associations": {
+		"*.html.txt": "html",
 	}
 }

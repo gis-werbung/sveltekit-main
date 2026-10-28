@@ -1,0 +1,11 @@
+Bestätige deine E-Mail
+----------------------
+
+Hallo %name%.
+Herzlich Willkommen bei GiS-Werbung.
+Um Missbrauch vorzubeugen, bitten wir dich deine E-Mail-Adresse zu bestätigen.
+
+Öffne diesen Link, um deine E-Mail zu bestätigen: %url%
+Der Link ist ab jetzt für 30 Minuten gültig.
+
+%footer%
