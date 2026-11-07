@@ -46,7 +46,7 @@
 				</Button>
 
 				<Button
-					variant="secondary"
+					variant="outline"
 					size={large.current ? "default" : "icon"}
 					onclick={() => {
 						const promise = logout();
@@ -63,7 +63,7 @@
 					<span class="not-md:hidden">Abmelden</span>
 				</Button>
 			{:else}
-				<Button href="/login" variant="secondary">
+				<Button href="/login" variant="outline">
 					<LogIn />
 					Anmelden
 				</Button>
