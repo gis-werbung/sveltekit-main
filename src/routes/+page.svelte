@@ -28,9 +28,9 @@
 </svelte:head>
 
 <header class="sticky top-0 left-0 z-10 border-b border-border bg-card">
-	<nav class="mx-auto flex items-center justify-between px-4 py-3 lg:max-w-6xl">
+	<nav class="mx-auto flex h-16.25 items-center justify-between px-4 py-3 lg:max-w-6xl">
 		<div class="flex items-center gap-2 font-medium sm:text-lg">
-			<img src={logo} alt="logo" class="size-8" />
+			<img src={logo} alt="GiS Werbung Logo" class="h-8 self-start" />
 			GiS Werbung
 		</div>
 
@@ -112,7 +112,7 @@
 
 					<ul>
 						<li>✔ Videos unterstützt</li>
-						<li>✔ Max 15 sek. Länge</li>
+						<li>✔ Max. 15 sek. Länge</li>
 						<li class="text-muted-foreground">✘ Ton</li>
 					</ul>
 				</div>
@@ -125,7 +125,7 @@
 
 					<ul>
 						<li>✔ Bilder: 30 sek. Angezeigedauer</li>
-						<li>✔ Videos: Max 30 sek. Länge</li>
+						<li>✔ Videos: Max. 30 sek. Länge</li>
 						<li class="text-muted-foreground">✘ Bevorzugung im Algorithmus</li>
 					</ul>
 				</div>

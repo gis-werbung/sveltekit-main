@@ -2,7 +2,7 @@
 	import { page } from "$app/state";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button";
-	import { ArrowLeft, CircleQuestionMark, House } from "@lucide/svelte";
+	import { ArrowLeft, CircleQuestionMark, House, RefreshCw } from "@lucide/svelte";
 </script>
 
 <svelte:head>
@@ -21,15 +21,27 @@
 			</div>
 		</Card.Header>
 		<Card.Footer class="flex flex-col gap-2">
-			<Button class="w-full" onclick={() => navigation.back()}>
-				<ArrowLeft />
-				Zurück
-			</Button>
+			<div class="grid w-full grid-cols-2 gap-2">
+				<Button class="w-full" onclick={() => navigation.back()}>
+					<ArrowLeft />
+					Zurück
+				</Button>
 
-			<Button class="w-full" href="/" variant="outline">
-				<House />
-				Zur Startseite
-			</Button>
+				<Button onclick={() => navigation.reload()}>
+					<RefreshCw />
+					Neuladen
+				</Button>
+
+				<Button href="/" variant="outline">
+					<House />
+					Zur Startseite
+				</Button>
+
+				<Button href="/app" variant="outline">
+					<House />
+					Zum Dashboard
+				</Button>
+			</div>
 		</Card.Footer>
 	</Card.Root>
 </div>

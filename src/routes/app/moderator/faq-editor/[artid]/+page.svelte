@@ -87,10 +87,10 @@
 		});
 
 		promise.then(() => {
-			lastTitle = data.title;
-			lastDescription = data.description;
-			lastContent = data.content;
-			lastIsPublic = data.isPublic;
+			lastTitle = form.fields.title.value()!;
+			lastDescription = form.fields.description.value() ?? null;
+			lastContent = form.fields.content.value()!;
+			lastIsPublic = isPublic;
 		});
 	})}
 >

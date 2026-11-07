@@ -292,7 +292,7 @@
 						<!-- svelte-ignore a11y_media_has_caption -->
 						<video
 							src={url}
-							class="relative z-20 w-full object-cover"
+							class="relative w-full object-cover"
 							controls={true}
 							bind:duration={videoDuration}
 						></video>
@@ -306,7 +306,7 @@
 						</Card.Header>
 					{:else}
 						<!-- svelte-ignore a11y_missing_attribute -->
-						<img src={url} class="relative z-20 w-full object-cover" />
+						<img src={url} class="relative w-full object-cover" />
 						<Card.Header>
 							<Card.Title>{file!.name}</Card.Title>
 							<Card.Description>
